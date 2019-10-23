@@ -1,0 +1,15 @@
+{
+  "radius": {
+    "default": "4px"
+  },
+  "font": {
+    "default": 1
+  },
+  "height": {
+    "icon": 1.4,
+    "input": 2.2
+  },
+  "width": {
+    "icon": 1.4
+  }
+}
