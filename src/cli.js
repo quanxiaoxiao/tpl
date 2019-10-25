@@ -41,19 +41,13 @@ yargs // eslint-disable-line
     },
   )
   .command(
-    'react',
+    'component',
     'make a react component',
-    (ys) => ys.options({
-      pathname: {
-        alias: 'p',
-        describe: 'component path name',
-        type: 'string',
-        demandOption: true,
-      },
-    }),
+    {},
     (argv) => {
-      if (argv.pathname) {
-        reactComponent(argv.pathname);
+      const [, pathname] = argv._;
+      if (pathname) {
+        reactComponent(pathname);
       }
     },
   )
