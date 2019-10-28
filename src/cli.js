@@ -1,6 +1,7 @@
 const yargs = require('yargs');
 const nodeProject = require('./projects/node');
 const reactProject = require('./projects/react');
+const proxyServerProject = require('./projects/proxyServer');
 const reactComponent = require('./reactComponent');
 
 const pkg = require('../package.json');
@@ -11,6 +12,9 @@ const projectMap = {
   },
   node: (name) => {
     nodeProject(name);
+  },
+  proxy: (name) => {
+    proxyServerProject(name);
   },
 };
 
@@ -28,7 +32,7 @@ yargs // eslint-disable-line
       type: {
         alias: 't',
         describe: 'set project type',
-        choices: ['node', 'react'],
+        choices: ['node', 'react', 'proxy'],
         default: 'node',
         type: 'string',
       },
