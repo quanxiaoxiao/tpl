@@ -55,5 +55,16 @@ yargs // eslint-disable-line
       }
     },
   )
+  .command(
+    'comp',
+    'make a react component',
+    {},
+    (argv) => {
+      const [, pathname] = argv._;
+      if (pathname) {
+        reactComponent(pathname);
+      }
+    },
+  )
   .version(pkg.version)
   .argv;

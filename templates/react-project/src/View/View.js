@@ -15,11 +15,11 @@ import Container from './Container';
 const View = React.memo(() => {
   const [colors, setColors] = useState(colorData);
   const [sizes, setSizes] = useState(sizeData);
-  const [fontSize, setFontSize] = useState(parseFloat(getComputedStyle(document.documentElement).fontSize)); // eslint-disable-line
+  const [fontSize, setFontSize] = useState(parseFloat(getComputedStyle(document.body).fontSize)); // eslint-disable-line
 
   useEffect(() => {
     window.addEventListener('resize', () => {
-      setFontSize(parseFloat(getComputedStyle(document.documentElement).fontSize));
+      setFontSize(parseFloat(getComputedStyle(document.body).fontSize));
     });
     setTimeout(() => {
       const resizeEvent = window.document.createEvent('UIEvents');

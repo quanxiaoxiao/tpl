@@ -36,7 +36,7 @@ const useActionDo = (params, options) => {
       savedLastParams.current = savedParams.current;
       action(savedParams.current);
     }
-  }, [params, pending]);
+  }, [action, pending]);
 
 
   useEffect(doAction, [params]);
@@ -49,7 +49,7 @@ const useActionDo = (params, options) => {
         action(savedParams.current);
       }, 0);
     }
-  }, [pending]);
+  }, [action, pending]);
 
   return {
     pending,
