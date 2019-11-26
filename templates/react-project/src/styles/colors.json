@@ -1,41 +1,22 @@
 {
   "default": "#f00",
-  "theme": {
-    "default": "#0084ff",
-    "secondary": "#ff9000"
-  },
-  "icon": {
-    "default": "#b8c3d3" ,
-    "active": "#fff"
-  },
-  "font": {
-    "default": "#333",
-    "active": "#fff",
-    "input": {
-      "default": "#666",
-      "placeholder": "#ccc"
+  "theme": "rgb(61, 117, 238)",
+  "fill": {
+    "default": "#fff",
+    "backdrop": "rgba(0, 0, 0, 0.2)",
+    "map": {
+      "default": "#f4f3ef",
+      "range": "rgb(61, 117, 238, 0.2)"
     }
   },
-  "border": {
-    "default": "rgba(26, 26, 26, 0.6)",
-    "input": {
-      "default": "rgba(0, 0, 0, 0)",
-      "active": "#8590a6"
-    }
+  "text": {
+    "placeholder": "#ccc",
+    "default": "#666"
   },
-  "spinner": "#fff",
-  "background": {
-    "default": "#f6f6f6",
-    "main": "#fff",
-    "backdrop": "rgba(0, 0, 0, 0.4)",
-    "input": {
-      "default": "rgba(235, 235, 235, 0.72)",
-      "active": "#fff"
+  "stroke": {
+    "default": "#ccc",
+    "map": {
+      "range": "rgb(61, 117, 238)"
     }
-  },
-  "gender": {
-    "male": "#f00",
-    "female": "#0f0",
-    "unknown": "#00f"
   }
 }

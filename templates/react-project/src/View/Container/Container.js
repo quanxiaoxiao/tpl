@@ -20,12 +20,8 @@ const Container = React.memo(() => {
         styles={css`
         ${emotionNormalize}
         ${initStyle}
-        ::-webkit-scrollbar {
-          width: 6px;
-          height: 4px;
-        }
         body {
-          color: ${getColor('font')};
+          color: ${getColor('text')};
         }
         `}
       />

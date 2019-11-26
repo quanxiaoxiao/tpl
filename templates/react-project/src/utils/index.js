@@ -28,3 +28,27 @@ export const numberToSize = (num) => {
   }
   return `${integer}${unit}`;
 };
+
+export const json2graphqlArgs = (obj) => {
+  const map = {
+    '[object String]': (value) => JSON.stringify(value),
+    '[object Date]': (value) => value.getTime(),
+    '[object Array]': (value) => `[${value.map((v) => JSON.stringify(v))}]`,
+    '[object Undefined]': () => null,
+  };
+
+  const args = Object
+    .entries(obj)
+    .map(([key, value]) => {
+      const type = Object.prototype.toString.call(value);
+      const item = map[type];
+      if (!item) {
+        return `${key}:${value}`;
+      }
+      return `${key}:${item(value)}`;
+    })
+    .join('\n');
+  return `{
+  ${args}
+  }`;
+};

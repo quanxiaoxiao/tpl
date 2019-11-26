@@ -14,8 +14,8 @@ const Backdrop = React.memo(({ onClick, ...other }) => {
     document.body.append(div);
     setElem(div);
     return () => {
-      if (elem) {
-        elem.remove();
+      if (div) {
+        div.remove();
       }
     };
   }, []);
@@ -40,7 +40,7 @@ const Backdrop = React.memo(({ onClick, ...other }) => {
         bottom: 0;
         right: 0;
         z-index: 9999;
-        background: ${getColor('background.backdrop')};
+        background: ${getColor('fill.backdrop')};
       `}
       onClick={handleClick}
       aria-label="backdrop"

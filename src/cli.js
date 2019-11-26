@@ -47,22 +47,38 @@ yargs // eslint-disable-line
   .command(
     'component',
     'make a react component',
-    {},
+    {
+      type: {
+        alias: 't',
+        type: 'string',
+        describe: 'set component type',
+        choices: ['taro', 'react'],
+        default: 'react',
+      },
+    },
     (argv) => {
       const [, pathname] = argv._;
       if (pathname) {
-        reactComponent(pathname);
+        reactComponent(pathname, argv.type);
       }
     },
   )
   .command(
     'comp',
     'make a react component',
-    {},
+    {
+      type: {
+        alias: 't',
+        type: 'string',
+        describe: 'set component type',
+        choices: ['taro', 'react'],
+        default: 'react',
+      },
+    },
     (argv) => {
       const [, pathname] = argv._;
       if (pathname) {
-        reactComponent(pathname);
+        reactComponent(pathname, argv.type);
       }
     },
   )

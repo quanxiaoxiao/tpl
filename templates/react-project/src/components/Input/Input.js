@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
 import useColor from 'hooks/useColor';
-import useSize from 'hooks/useSize';
 
 const inputEventNameList = [
   'onChange',
@@ -33,7 +32,6 @@ const Input = React.memo(({
   const input = useRef();
   const sizer = useRef();
   const getColor = useColor();
-  const getSize = useSize();
 
   const copyInputStyle = () => {
     if (!sizer.current || !input.current) {
@@ -130,7 +128,7 @@ const Input = React.memo(({
     <div
       aria-label={`input-${isFocus ? 'focus' : 'blur'}`}
       css={css`
-        height: ${getSize('height.input')};
+        height: 2.4rem;
         display: ${autoSize ? 'inline-flex' : 'flex'};
         ${autoSize ? 'vertical-align: bottom;' : ''}
         align-items: center;
@@ -146,7 +144,7 @@ const Input = React.memo(({
         ref={input}
         value={value}
         css={css`
-          color: ${getColor('font.input')};
+          color: ${getColor('text')};
           flex-grow: 1;
           border-width: 0;
           outline: 0;
@@ -159,7 +157,7 @@ const Input = React.memo(({
           margin-right: ${right ? '0.6rem' : 0};
           vertical-align: bottom;
           &::-webkit-input-placeholder {
-            color: ${getColor('font.input.placeholder')};
+            color: ${getColor('text.placeholder')};
           }
         `}
         {...inputEventHandlers}

@@ -3,8 +3,6 @@
 import React from 'react';
 import { jsx, css } from '@emotion/core';
 import PropTypes from 'prop-types';
-import useColor from 'hooks/useColor';
-import useSize from 'hooks/useSize';
 import icons from './icons.json';
 
 const paths = [
@@ -16,69 +14,29 @@ const paths = [
 const Icon = React.memo(({
   code,
   color,
-  link,
-  active,
   ...other
 }) => {
   const icon = icons[code];
   const viewBox = icon ? icon.viewBox : '0 0 1024 1024';
-  const getSize = useSize();
-  const getColor = useColor();
   const pathList = (icon ? icon.paths : paths)
     .map((item, i) => (
       <path
         key={i}
         d={item.d}
-        fill={color || getColor('icon')}
+        fill={color || item.fill || '#ccc'}
       />
     ));
-  if (link) {
-    return (
-      <a
-        {...other}
-        css={css`
-          display: inline-block;
-          width: ${getSize('width.icon')};
-          height: ${getSize('height.icon')};
-          cursor: pointer;
-          font-size: 0;
-          vertical-align: middle;
-
-          path {
-            transition: fill 0.4s;
-            fill: ${active ? getColor('theme') : null};
-          }
-
-          &:hover {
-            path {
-              ${active || !color ? `fill: ${getColor('theme')};` : ''}
-            }
-          }
-        `}
-      >
-        <svg
-          viewBox={viewBox}
-          css={css`
-            width: 100%;
-            height: 100%;
-            font-size: 0;
-            vertical-align: middle;
-          `}
-        >
-          {pathList}
-        </svg>
-      </a>
-    );
-  }
   return (
     <svg
       viewBox={viewBox}
-      {...other}
       css={css`
-        width: ${getSize('width.icon')};
-        height: ${getSize('height.icon')};
-        vertical-align: middle;
+        width: 1.2rem;
+        height: 1.2rem;
+        font-size: 0;
+        line-height: 0;
+        vertical-align: top;
       `}
+      {...other}
     >
       {pathList}
     </svg>
@@ -89,8 +47,6 @@ Icon.propTypes = {
   viewBox: PropTypes.string,
   code: PropTypes.string,
   color: PropTypes.string,
-  link: PropTypes.bool,
-  active: PropTypes.bool,
 };
 
 export default Icon;

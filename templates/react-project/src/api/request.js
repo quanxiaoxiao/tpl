@@ -1,6 +1,6 @@
-const get = path => fetch(`${path}`, {
+const get = (path) => fetch(`${path}`, {
   credentials: 'include',
-}).then(a => a.json());
+}).then((a) => a.json());
 
 
 export default {

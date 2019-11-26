@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const shelljs = require('shelljs');
 const copy = require('./lib/copy');
 
-module.exports = (pathname) => {
+module.exports = (pathname, type) => {
   const componentPathname = path.resolve(process.cwd(), pathname);
   if (shelljs.test('-d', componentPathname)) {
     console.log(`component: ${chalk.red(pathname)} already exist`);
@@ -15,8 +15,12 @@ module.exports = (pathname) => {
     process.exit(1);
   }
   shelljs.mkdir('-p', componentPathname);
+  const typeMap = {
+    taro: [path.resolve(__dirname, '..', 'templates', 'react-taro-component')],
+    react: [path.resolve(__dirname, '..', 'templates', 'react-component')],
+  };
   const pathList = [
-    path.resolve(__dirname, '..', 'templates', 'react-component'),
+    ...typeMap[type],
   ];
   copy(pathList, componentName, componentPathname, pathname);
 };
