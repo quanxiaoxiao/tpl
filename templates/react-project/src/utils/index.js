@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const numberToFixed = (a = 0, size = 1) => parseFloat(Number(a).toFixed(size));
 
 export const deg2Radian = (degree) => degree * Math.PI / 180;
@@ -30,6 +32,9 @@ export const numberToSize = (num) => {
 };
 
 export const json2graphqlArgs = (obj) => {
+  if (_.isEmpty(obj)) {
+    return null;
+  }
   const map = {
     '[object String]': (value) => JSON.stringify(value),
     '[object Date]': (value) => value.getTime(),

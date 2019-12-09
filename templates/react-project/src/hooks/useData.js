@@ -4,14 +4,13 @@ import {
   useCallback,
   useRef,
 } from 'react';
-import _ from 'lodash';
 
 const useData = (obj) => {
-  const [data, setData] = useState(null);
-  const dataSaved = useRef();
+  const [data, setData] = useState({});
+  const originalSaved = useRef();
 
   useEffect(() => {
-    const _data = Object
+    const original = Object
       .keys(obj)
       .reduce((acc, key) => ({
         ...acc,
@@ -21,57 +20,52 @@ const useData = (obj) => {
           match: obj[key].match || (() => true),
         },
       }), {});
-    dataSaved.current = _data;
-    setData(_data);
+    originalSaved.current = original;
+  });
+
+  useEffect(() => {
+    setData(Object.keys(obj).reduce((acc, key) => ({
+      ...acc,
+      [key]: obj[key].value,
+    }), {}));
   }, []);
 
   const setValue = useCallback((key, value) => {
-    const _data = dataSaved.current;
-    if (_data && Object.hasOwnProperty.call(_data, key)) {
-      const __data = {
-        ..._data,
-        [key]: {
-          ..._data[key],
-          value,
-        },
-      };
-      dataSaved.current = __data;
-      setData(__data);
+    if (typeof key === 'function') {
+      setData((v) => ({
+        ...v,
+        ...key(v),
+      }));
+    } else if (Object.hasOwnProperty.call(data, key)) {
+      setData({
+        ...data,
+        [key]: value,
+      });
     }
-  }, [data]);
+  });
 
-  const getValue = useCallback((key) => {
-    const _data = dataSaved.current;
-    if (_data && Object.hasOwnProperty.call(_data, key)) {
-      return _data[key].value;
-    }
-    return null;
-  }, [data]);
+  const getValue = useCallback((key) => data[key], [data]);
 
   const output = useCallback(() => {
     const ret = Object
       .keys(data)
       .reduce((acc, key) => ({
         ...acc,
-        [key]: data[key].output(data[key].value),
+        [key]: originalSaved.current[key].output(data[key]),
       }), {});
     return ret;
   }, [data]);
 
   const validation = useCallback((key) => {
-    const _data = dataSaved.current;
-    if (_.isEmpty(_data)) {
+    if (key) {
+      if (Object.hasOwnProperty.call(originalSaved.current, key)) {
+        return originalSaved.current[key].match(data[key]);
+      }
       return false;
     }
-    if (key) {
-      if (_data && Object.hasOwnProperty.call(_data, key)) {
-        const item = _data[key];
-        return item.match(item.value);
-      }
-    }
-    return Object.keys(_data).every((k) => {
-      const item = _data[k];
-      return item.match(item.value);
+    return Object.keys(data).every((k) => {
+      const item = originalSaved.current[k];
+      return item.match(data[k], getValue, validation);
     });
   }, [data]);
 

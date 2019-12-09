@@ -6,10 +6,8 @@
     "default": 1
   },
   "height": {
-    "icon": 1.4,
-    "input": 2.2
+    "header": "4.2rem"
   },
   "width": {
-    "icon": 1.4
   }
 }

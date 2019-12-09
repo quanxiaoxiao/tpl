@@ -1,5 +1,10 @@
 /** @jsx jsx */
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
 import useColor from 'hooks/useColor';
@@ -33,7 +38,7 @@ const Input = React.memo(({
   const sizer = useRef();
   const getColor = useColor();
 
-  const copyInputStyle = () => {
+  const copyInputStyle = useCallback(() => {
     if (!sizer.current || !input.current) {
       return;
     }
@@ -43,7 +48,7 @@ const Input = React.memo(({
     sizer.current.style.fontStyle = inputStyle.fontStyle;
     sizer.current.style.letterSpacing = inputStyle.letterSpacing;
     sizer.current.style.textTransform = inputStyle.textTransform;
-  };
+  }, []);
 
   useEffect(() => {
     if (autoSize) {
@@ -152,7 +157,6 @@ const Input = React.memo(({
           padding: 0;
           line-height: 1;
           font-family: inherit;
-          ${width != null ? `width: ${Math.max(2, width)}px;` : ''}
           margin-left: ${left ? '0.6rem' : 0};
           margin-right: ${right ? '0.6rem' : 0};
           vertical-align: bottom;
@@ -160,6 +164,9 @@ const Input = React.memo(({
             color: ${getColor('text.placeholder')};
           }
         `}
+        style={{
+          width: width != null ? Math.max(2, width) : null,
+        }}
         {...inputEventHandlers}
         {...inputProps}
       />

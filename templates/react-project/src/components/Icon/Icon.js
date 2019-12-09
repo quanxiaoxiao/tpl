@@ -29,14 +29,16 @@ const Icon = React.memo(({
   return (
     <svg
       viewBox={viewBox}
+      {...other}
       css={css`
         width: 1.2rem;
         height: 1.2rem;
         font-size: 0;
         line-height: 0;
-        vertical-align: top;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
       `}
-      {...other}
     >
       {pathList}
     </svg>

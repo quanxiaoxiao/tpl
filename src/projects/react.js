@@ -12,6 +12,7 @@ module.exports = (projectName) => {
     '@emotion/core',
     '@emotion/styled',
     'emotion-normalize',
+    'resize-observer-polyfill',
     'history',
     'lodash',
     'prop-types',

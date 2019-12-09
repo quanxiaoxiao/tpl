@@ -3,20 +3,22 @@
   "theme": "rgb(61, 117, 238)",
   "fill": {
     "default": "#fff",
-    "backdrop": "rgba(0, 0, 0, 0.2)",
-    "map": {
-      "default": "#f4f3ef",
-      "range": "rgb(61, 117, 238, 0.2)"
-    }
+    "1": "#f5a947",
+    "2": "#ebebeb",
+    "icon": "#ccc",
+    "disable": "#ccc",
+    "background": "#f0f0f0",
+    "backdrop": "rgba(0, 0, 0, 0.6)",
+    "modal": "#fff",
+    "toastr": "rgba(0, 0, 0, 0.7)"
   },
+  "error": "#f00",
   "text": {
     "placeholder": "#ccc",
     "default": "#666"
   },
   "stroke": {
     "default": "#ccc",
-    "map": {
-      "range": "rgb(61, 117, 238)"
-    }
+    "1": "rgba(0, 0, 0, 0.1)"
   }
 }
