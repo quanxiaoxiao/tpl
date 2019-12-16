@@ -1,0 +1,16 @@
+{
+  "name": "{{name}}",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development node src/server.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

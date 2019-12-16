@@ -10,19 +10,19 @@
     "tpl": "./bin/index.js"
   },
   "dependencies": {
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "detect-character-encoding": "^0.8.0",
-    "handlebars": "^4.4.3",
+    "handlebars": "^4.5.3",
     "lodash": "^4.17.15",
     "shelljs": "^0.8.3",
-    "yargs": "^14.2.0"
+    "yargs": "^14.2.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.5.1",
+    "eslint": "^6.7.2",
     "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.16.0"
+    "eslint-plugin-react": "^7.17.0"
   }
 }
