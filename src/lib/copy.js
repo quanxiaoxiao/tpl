@@ -67,6 +67,7 @@ module.exports = (pathList, name, destRoot, base) => {
           });
           fs.writeFileSync(dest, content, 'utf-8');
         } catch (error) {
+          console.error(dest, error);
           fs.writeFileSync(dest, fileBuffer);
         }
       } else {

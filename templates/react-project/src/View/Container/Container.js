@@ -7,15 +7,11 @@ import { Route, Switch } from 'react-router-dom';
 import Layout from 'components/Layout';
 
 import Home from 'pages/Home';
-import Project from 'pages/Project';
 
 import useColor from 'hooks/useColor';
 import useSize from 'hooks/useSize';
 
 import { init as initStyle } from 'styles';
-
-import Header from './Header';
-import Navs from './Navs';
 
 
 const Container = React.memo(() => {
@@ -34,35 +30,13 @@ const Container = React.memo(() => {
         }
         `}
       />
-      <Header />
-      <Layout
-        css={css`
-          height: calc(100vh - ${getSize('height.header')});
-        `}
-      >
-        <Layout.Item
-          width="12rem"
-          css={css`
-            background: ${getColor('fill')};
-          `}
-        >
-          <Navs />
-        </Layout.Item>
-        <Layout.Item>
-          <Switch>
-            <Route
-              exact
-              path="/"
-              component={Home}
-            />
-            <Route
-              exact
-              path="/project"
-              component={Project}
-            />
-          </Switch>
-        </Layout.Item>
-      </Layout>
+      <Switch>
+        <Route
+          exact
+          path="/"
+          component={Home}
+        />
+      </Switch>
     </Fragment>
   );
 });

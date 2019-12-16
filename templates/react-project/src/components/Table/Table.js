@@ -10,10 +10,21 @@ import stylePropType from 'react-style-proptype';
 import _ from 'lodash';
 import { jsx, css } from '@emotion/core';
 import useFontSize from 'hooks/useFontSize';
+import ScrollBar from './ScrollBar';
 
-const Table = React.memo(({ className, list, columns }) => {
+const Table = React.memo(({
+  className,
+  list,
+  columns,
+  scroll,
+}) => {
   const [containerWidth, setContainerWidth] = useState(0);
+  const [bodyHeight, setBodyHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
   const container = useRef();
+  const bodyRef = useRef();
+  const contentRef = useRef();
   const fontSize = useFontSize();
 
   useLayoutEffect(() => {
@@ -32,6 +43,68 @@ const Table = React.memo(({ className, list, columns }) => {
     return () => {
       observer.disconnect();
       window.cancelAnimationFrame(animationFrameID);
+    };
+  });
+
+  useLayoutEffect(() => {
+    let animationFrameID = null;
+    let observer;
+    if (bodyRef.current && contentRef.current && scroll) {
+      observer = new ResizeObserver((entries) => {
+        const newBodyHeight = entries[0].contentRect.height;
+        if (offsetY !== 0) {
+          if (newBodyHeight >= contentHeight) {
+            setOffsetY(0);
+          } else if (offsetY > contentHeight - newBodyHeight) {
+            setOffsetY(contentHeight - newBodyHeight);
+          }
+        }
+        if (newBodyHeight !== bodyHeight) {
+          animationFrameID = window.requestAnimationFrame(() => {
+            setBodyHeight(newBodyHeight);
+          });
+        }
+      });
+
+      observer.observe(bodyRef.current);
+    }
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+        window.cancelAnimationFrame(animationFrameID);
+      }
+    };
+  });
+
+  useLayoutEffect(() => {
+    let animationFrameID = null;
+    let observer;
+    if (bodyRef.current && contentRef.current && scroll) {
+      observer = new ResizeObserver((entries) => {
+        const newContentHeight = entries[0].contentRect.height;
+        if (offsetY !== 0) {
+          if (bodyHeight >= newContentHeight) {
+            setOffsetY(0);
+          } else if (offsetY > newContentHeight - bodyHeight) {
+            setOffsetY(newContentHeight - bodyHeight);
+          }
+        }
+        if (contentHeight !== newContentHeight) {
+          animationFrameID = window.requestAnimationFrame(() => {
+            setContentHeight(newContentHeight);
+          });
+        }
+      });
+
+      observer.observe(contentRef.current);
+    }
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+        window.cancelAnimationFrame(animationFrameID);
+      }
     };
   });
 
@@ -81,6 +154,24 @@ const Table = React.memo(({ className, list, columns }) => {
     );
   }
 
+  const handleWheelOnBody = (ev) => {
+    if (scroll && bodyRef.current && contentRef.current) {
+      if (contentHeight > bodyHeight) {
+        const { deltaY } = ev;
+        setOffsetY((v) => {
+          const next = v + (deltaY > 0 ? 10 : -10);
+          if (next < 0) {
+            return 0;
+          }
+          if (next > contentHeight - bodyHeight) {
+            return contentHeight - bodyHeight;
+          }
+          return next;
+        });
+      }
+    }
+  };
+
   return (
     <div
       ref={container}
@@ -108,19 +199,42 @@ const Table = React.memo(({ className, list, columns }) => {
       </div>
       <div
         aria-label="table-body"
+        ref={bodyRef}
+        onWheel={handleWheelOnBody}
+        css={css`
+          position: relative;
+          [aria-label=scrollbar] {
+            display: none;
+          }
+          &:hover {
+            [aria-label=scrollbar] {
+              display: block;
+            }
+          }
+        `}
       >
         {
-          list
-            .map((item) => (
-              <div
-                key={item.id}
-                aria-label="table-row"
-                css={css`
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                {
+          scroll && contentHeight > bodyHeight && (
+            <ScrollBar
+              offsetY={offsetY}
+              contentHeight={contentHeight}
+              bodyHeight={bodyHeight}
+            />
+          )
+        }
+        {
+          (() => {
+            const rows = list
+              .map((item) => (
+                <div
+                  key={item.id}
+                  aria-label="table-row"
+                  css={css`
+                    display: flex;
+                    align-items: center;
+                  `}
+                >
+                  {
                   columnList
                     .map((columnItem) => (
                       <div
@@ -134,8 +248,22 @@ const Table = React.memo(({ className, list, columns }) => {
                       </div>
                     ))
                 }
-              </div>
-            ))
+                </div>
+              ));
+            if (scroll) {
+              return (
+                <div
+                  ref={contentRef}
+                  style={{
+                    transform: `translate3d(0, ${-offsetY}px, 0)`,
+                  }}
+                >
+                  {rows}
+                </div>
+              );
+            }
+            return rows;
+          })()
         }
       </div>
     </div>
@@ -144,6 +272,7 @@ const Table = React.memo(({ className, list, columns }) => {
 
 Table.propTypes = {
   className: PropTypes.string,
+  scroll: PropTypes.bool,
   list: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
   })).isRequired,

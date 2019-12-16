@@ -5,30 +5,26 @@ import {
   useRef,
 } from 'react';
 
-const useData = (obj) => {
-  const [data, setData] = useState({});
+const useData = (initData) => {
+  const [data, setData] = useState(Object.keys(initData).reduce((acc, key) => ({
+    ...acc,
+    [key]: initData[key].value,
+  }), {}));
   const originalSaved = useRef();
 
   useEffect(() => {
     const original = Object
-      .keys(obj)
+      .keys(initData)
       .reduce((acc, key) => ({
         ...acc,
         [key]: {
-          value: obj[key].value,
-          output: obj[key].output || ((v) => v),
-          match: obj[key].match || (() => true),
+          value: initData[key].value,
+          output: initData[key].output || ((v) => v),
+          match: initData[key].match || (() => true),
         },
       }), {});
     originalSaved.current = original;
   });
-
-  useEffect(() => {
-    setData(Object.keys(obj).reduce((acc, key) => ({
-      ...acc,
-      [key]: obj[key].value,
-    }), {}));
-  }, []);
 
   const setValue = useCallback((key, value) => {
     if (typeof key === 'function') {
@@ -74,6 +70,7 @@ const useData = (obj) => {
     getValue,
     output,
     validation,
+    data,
   };
 };
 

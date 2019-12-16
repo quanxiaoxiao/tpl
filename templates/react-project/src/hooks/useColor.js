@@ -4,6 +4,7 @@ import ColorContext from 'contexts/Color';
 
 const useColor = () => {
   const { colors } = useContext(ColorContext);
+  const list = colors._ || [];
 
   const getColor = (prop, color = colors.default) => {
     let value = _.get(colors, prop);
@@ -14,7 +15,10 @@ const useColor = () => {
       if (process.env.NODE_ENV === 'development') {
         console.warn(`colors prop: ${prop} is not set`);
       }
-      return _.get(colors, `${prop}.default`) || color;
+      value = _.get(colors, `${prop}.default`) || color;
+    }
+    if (/^\$(\d+)/.test(value)) {
+      value = list[RegExp.$1] || color;
     }
     return value;
   };
