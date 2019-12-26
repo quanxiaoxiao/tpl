@@ -47,6 +47,7 @@ const useAction = (options) => {
       if (mounted.current) {
         reject(error);
       }
+      console.error(error);
     } finally {
       if (mounted.current) {
         setPending(false);

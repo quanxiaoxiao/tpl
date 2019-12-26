@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const initialState = {
   navList: [
     {
@@ -6,6 +8,7 @@ export const initialState = {
     },
   ],
   loadingShow: false,
+  toastrList: [],
 };
 
 export const actions = {
@@ -14,6 +17,14 @@ export const actions = {
   }),
   hideLoading: () => ({
     type: 'hideLoading',
+  }),
+  addToastr: (payload) => ({
+    type: 'addToastr',
+    payload,
+  }),
+  removeToastr: (payload) => ({
+    type: 'removeToastr',
+    payload,
   }),
 };
 
@@ -28,6 +39,16 @@ export const reducer = (state, { type, payload }) => {
       return {
         ...state,
         loadingShow: false,
+      };
+    case 'addToastr':
+      return {
+        ...state,
+        toastrList: [...state.toastrList, { ...payload, id: _.uniqueId('toastr_') }],
+      };
+    case 'removeToastr':
+      return {
+        ...state,
+        toastrList: state.toastrList.filter((item) => item.id !== payload),
       };
     default:
       throw new Error();

@@ -13,6 +13,7 @@ import sizeData from 'styles/sizes.json';
 import ColorContext from 'contexts/Color';
 import FontSizeContext from 'contexts/FontSize';
 import SizeContext from 'contexts/Size';
+import Toastr from './Toastr';
 import Loading from './Loading';
 
 import Context from './Context';
@@ -69,6 +70,7 @@ const View = React.memo(() => {
             <BrowserRouter>
               <Container />
             </BrowserRouter>
+            <Toastr />
             <Loading />
           </SizeContext.Provider>
         </ColorContext.Provider>

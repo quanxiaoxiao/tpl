@@ -195,8 +195,8 @@ const Input = React.memo(({
 Input.propTypes = {
   className: PropTypes.string,
   value: PropTypes.string.isRequired,
-  right: PropTypes.element,
-  left: PropTypes.element,
+  right: PropTypes.oneOfType([PropTypes.element, PropTypes.bool]),
+  left: PropTypes.oneOfType([PropTypes.element, PropTypes.bool]),
   autoSize: PropTypes.bool,
 };
 

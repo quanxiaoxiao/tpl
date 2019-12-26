@@ -11,12 +11,21 @@ const useToastr = () => {
     hideLoading: () => {
       dispatch(actions.hideLoading());
     },
-    message: () => {
-    },
-    error: () => {
-    },
-    warning: () => {
-    },
+    ...[
+      'info',
+      'error',
+      'warning',
+    ].reduce((acc, name) => ({
+      ...acc,
+      [name]: (message, { position, duration } = {}) => {
+        dispatch(actions.addToastr({
+          type: name,
+          message,
+          position,
+          duration,
+        }));
+      },
+    }), {}),
   };
 };
 

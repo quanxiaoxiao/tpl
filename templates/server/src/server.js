@@ -79,7 +79,7 @@ app.use(router({
               ...pathes,
               [pathname]: () => 'index.html',
             }), {}),
-            '/static/(.*)': (matchs) => `${matchs[1]}`,
+            '/static/(.*)': (matchs) => decodeURIComponent(matchs[1]),
           },
         },
       }), {}),

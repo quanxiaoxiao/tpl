@@ -17,6 +17,7 @@ module.exports = (projectName) => {
     'lodash',
     'prop-types',
     'react',
+    'react-spring',
     'react-dom',
     'react-router-dom',
     'react-style-proptype',

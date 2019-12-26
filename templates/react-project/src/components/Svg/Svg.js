@@ -14,15 +14,18 @@ const Svg = React.memo(({
   const container = useRef();
   const [containerWidth, setContainerWidth] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
+  const [contentRect, setContentRect] = useState();
 
   useLayoutEffect(() => {
     let animationFrameID = null;
     const observer = new ResizeObserver((entries) => {
-      const { contentRect } = entries[0];
-      if (contentRect.width !== containerWidth || contentRect.height !== containerHeight) {
+      if (!contentRect
+        || ['top', 'left', 'right', 'bottom', 'width', 'height']
+          .some((name) => entries[0].contentRect[name] !== contentRect[name])) {
         animationFrameID = window.requestAnimationFrame(() => {
-          setContainerWidth(contentRect.width);
-          setContainerHeight(contentRect.height);
+          setContentRect(entries[0].contentRect);
+          setContainerWidth(entries[0].contentRect.width);
+          setContainerHeight(entries[0].contentRect.height);
         });
       }
     });
@@ -102,7 +105,10 @@ const Svg = React.memo(({
         <g
           transform={transform}
         >
-          {children(style)}
+          {children({
+            ...style,
+            contentRect,
+          })}
         </g>
       </svg>
     </div>
