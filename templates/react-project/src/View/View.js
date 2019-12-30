@@ -7,7 +7,7 @@ import { hot } from 'react-hot-loader'; // eslint-disable-line
 import { BrowserRouter } from 'react-router-dom';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import colorData from 'styles/colors.json';
+import colorData from 'colors.json';
 import sizeData from 'styles/sizes.json';
 
 import ColorContext from 'contexts/Color';
@@ -17,13 +17,13 @@ import Toastr from './Toastr';
 import Loading from './Loading';
 
 import Context from './Context';
-import { reducer, initialState } from './reducer';
+import { reducer, initialState, actions } from './reducer';
 
 
 import Container from './Container';
 
 const View = React.memo(() => {
-  const [colors, setColors] = useState(colorData);
+  const [color, setColor] = useState(colorData);
   const [sizes, setSizes] = useState(sizeData);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [fontSize, setFontSize] = useState(parseFloat(getComputedStyle(document.body).fontSize)); // eslint-disable-line
@@ -50,6 +50,7 @@ const View = React.memo(() => {
       value={{
         state,
         dispatch,
+        actions,
       }}
     >
       <FontSizeContext.Provider
@@ -57,8 +58,8 @@ const View = React.memo(() => {
       >
         <ColorContext.Provider
           value={{
-            colors,
-            onChange: (v) => setColors(v),
+            data: color,
+            onChange: (v) => setColor(v),
           }}
         >
           <SizeContext.Provider

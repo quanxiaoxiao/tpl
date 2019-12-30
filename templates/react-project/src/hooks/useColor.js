@@ -3,24 +3,19 @@ import _ from 'lodash';
 import ColorContext from 'contexts/Color';
 
 const useColor = () => {
-  const { colors } = useContext(ColorContext);
-  const list = colors._ || [];
+  const { data } = useContext(ColorContext);
+  const list = data._ || [];
 
-  const getColor = (prop, color = colors.default) => {
-    let value = _.get(colors, prop);
-    if (_.isPlainObject(value)) {
-      value = _.get(value, 'default');
+  const getColor = (prop = 'default') => {
+    let index = _.get(data.data, prop);
+    if (_.isPlainObject(index)) {
+      index = _.get(index, 'default');
     }
-    if (!value) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`colors prop: ${prop} is not set`);
-      }
-      value = _.get(colors, `${prop}.default`) || color;
+    if (index == null) {
+      console.warn(`color: ${prop} unset`);
+      return '#f00';
     }
-    if (/^\$(\d+)/.test(value)) {
-      value = list[RegExp.$1] || color;
-    }
-    return value;
+    return list[index];
   };
 
   return getColor;

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
 import useColor from 'hooks/useColor';
@@ -13,6 +13,18 @@ const Modal = React.memo(({
   className,
 }) => {
   const getColor = useColor();
+
+  useEffect(() => {
+    const handleKeyDownOnWindow = (ev) => {
+      if (ev.keyCode === 27 && ev.target.tagName !== 'INPUT') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDownOnWindow);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDownOnWindow);
+    };
+  }, []);
 
   return (
     <Backdrop
@@ -28,7 +40,6 @@ const Modal = React.memo(({
           width: 38vw;
           background: ${getColor('fill.modal')};
           border-radius: 0.3rem;
-          padding: 2rem;
         `}
         onClick={(ev) => ev.stopPropagation()}
       >
@@ -37,9 +48,10 @@ const Modal = React.memo(({
             && (
             <div
               css={css`
-                font-size: 1.4rem;
+                font-size: 1.2rem;
                 text-align: center;
-                height: 3.2rem;
+                height: 3.6rem;
+                line-height: 3.6rem;
                 font-weight: bold;
               `}
               aria-label="title"
@@ -54,10 +66,9 @@ const Modal = React.memo(({
         <a
           css={css`
             position: absolute;
-            top: 0;
-            left: 100%;
-            margin-left: 0.4rem;
-            margin-top: 0.4rem;
+            top: 1.8rem;
+            right: 1rem;
+            transform: translateY(-50%);
           `}
           onClick={onClose}
         >
@@ -65,8 +76,9 @@ const Modal = React.memo(({
             css={css`
               width: 1.1rem;
               height: 1.1rem;
+              display: block;
             `}
-            color={getColor('fill')}
+            color={getColor('fill.icon.4')}
             code="e600"
           />
         </a>

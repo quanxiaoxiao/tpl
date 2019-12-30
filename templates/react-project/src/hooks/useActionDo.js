@@ -7,14 +7,15 @@ import {
 import useAction from './useAction';
 
 const useActionDo = (params, options) => {
-  const savedLastDo = useRef(false);
-  const savedParams = useRef();
-  const savedLastParams = useRef();
+  const waitingSaved = useRef(false);
+  const argsSaved = useRef();
+  const paramsSaved = useRef();
+  const lastParamsSaved = useRef();
 
-  const _options = useMemo(() => ({
+  const actionOptions = useMemo(() => ({
     ...options,
     resolve: (...args) => {
-      if (options.resolve && savedLastParams.current === savedParams.current) {
+      if (options.resolve && lastParamsSaved.current === paramsSaved.current) {
         options.resolve(...args);
       }
     },
@@ -23,37 +24,39 @@ const useActionDo = (params, options) => {
   const {
     pending,
     action,
-  } = useAction(_options);
+  } = useAction(actionOptions);
 
   useEffect(() => {
-    savedParams.current = params;
-  });
+    paramsSaved.current = params;
+  }, [params]);
 
-  const doAction = useCallback(() => {
+  const executeAction = useCallback((...args) => {
     if (pending) {
-      savedLastDo.current = true;
+      waitingSaved.current = true;
+      argsSaved.current = args;
     } else {
-      savedLastParams.current = savedParams.current;
-      action(savedParams.current);
+      lastParamsSaved.current = paramsSaved.current;
+      action(paramsSaved.current, ...args);
     }
   }, [action, pending]);
 
 
-  useEffect(doAction, [params]);
+  useEffect(executeAction, [params]);
 
   useEffect(() => {
-    if (!pending && savedLastDo.current) {
-      savedLastDo.current = false;
+    if (!pending && waitingSaved.current) {
+      waitingSaved.current = false;
       setTimeout(() => {
-        savedLastParams.current = savedParams.current;
-        action(savedParams.current);
+        lastParamsSaved.current = paramsSaved.current;
+        action(lastParamsSaved.current, ...argsSaved.args);
+        argsSaved.args = null;
       }, 0);
     }
   }, [action, pending]);
 
   return {
     pending,
-    action: doAction,
+    action: executeAction,
   };
 };
 

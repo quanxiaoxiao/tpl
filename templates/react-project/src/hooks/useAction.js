@@ -16,13 +16,13 @@ const useAction = (options) => {
     final = () => {},
   } = options;
 
-  const savedCallback = useRef(fn);
-  const savedMatch = useRef(match);
+  const actionSaved = useRef(fn);
+  const matchSaved = useRef(match);
   const mounted = useRef();
 
   useEffect(() => {
-    savedMatch.current = match;
-    savedCallback.current = fn;
+    matchSaved.current = match;
+    actionSaved.current = fn;
   });
 
   useEffect(() => {
@@ -33,13 +33,13 @@ const useAction = (options) => {
   }, []);
 
   const action = useCallback(async (...args) => {
-    if (!savedMatch.current(...args) || pending || !mounted.current) {
+    if (!mounted.current || pending || !matchSaved.current(...args)) {
       return;
     }
     pre();
     setPending(true);
     try {
-      const ret = await savedCallback.current(...args);
+      const ret = await actionSaved.current(...args);
       if (mounted.current) {
         resolve(ret);
       }

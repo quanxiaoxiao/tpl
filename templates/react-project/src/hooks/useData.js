@@ -38,7 +38,7 @@ const useData = (initData) => {
         [key]: value,
       });
     }
-  });
+  }, [data]);
 
   const getValue = useCallback((key) => data[key], [data]);
 
@@ -53,6 +53,9 @@ const useData = (initData) => {
   }, [data]);
 
   const validation = useCallback((key) => {
+    if (!originalSaved.current) {
+      return false;
+    }
     if (key) {
       if (Object.hasOwnProperty.call(originalSaved.current, key)) {
         return originalSaved.current[key].match(data[key]);

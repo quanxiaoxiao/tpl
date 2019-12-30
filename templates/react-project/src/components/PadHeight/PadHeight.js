@@ -97,6 +97,7 @@ const PadHeight = React.memo(({
     >
       <div
         ref={headerRef}
+        aria-label={type}
         css={css`
           position: absolute;
           ${type === 'top' ? 'top' : 'bottom'}: 0;
