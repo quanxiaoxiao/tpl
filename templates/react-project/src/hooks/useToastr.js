@@ -1,15 +1,13 @@
-import { useContext } from 'react';
-import Context from 'View/Context';
-import { actions } from 'View/reducer';
+import useReducer from 'View/useReducer';
 
 const useToastr = () => {
-  const { dispatch } = useContext(Context);
+  const { actions } = useReducer();
   return {
     showLoading: () => {
-      dispatch(actions.showLoading());
+      actions.showLoading();
     },
     hideLoading: () => {
-      dispatch(actions.hideLoading());
+      actions.hideLoading();
     },
     ...[
       'info',
@@ -18,12 +16,12 @@ const useToastr = () => {
     ].reduce((acc, name) => ({
       ...acc,
       [name]: (message, { position, duration } = {}) => {
-        dispatch(actions.addToastr({
+        actions.addToastr({
           type: name,
           message,
           position,
           duration,
-        }));
+        });
       },
     }), {}),
   };

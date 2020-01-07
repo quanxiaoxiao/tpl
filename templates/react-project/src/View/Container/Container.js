@@ -4,19 +4,15 @@ import { jsx, css, Global } from '@emotion/core';
 import emotionNormalize from 'emotion-normalize';
 import { Route, Switch } from 'react-router-dom';
 
-import Layout from 'components/Layout';
-
 import Home from 'pages/Home';
 
 import useColor from 'hooks/useColor';
-import useSize from 'hooks/useSize';
 
 import { init as initStyle } from 'styles';
 
 
 const Container = React.memo(() => {
   const getColor = useColor();
-  const getSize = useSize();
 
   return (
     <Fragment>
@@ -34,8 +30,9 @@ const Container = React.memo(() => {
         <Route
           exact
           path="/"
-          component={Home}
-        />
+        >
+          <Home />
+        </Route>
       </Switch>
     </Fragment>
   );

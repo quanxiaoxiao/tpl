@@ -11,16 +11,12 @@ const Button = React.memo(({ children, ...other }) => {
     <button
       type="button"
       css={css`
-        background: ${getColor('fill.button.1')};
-        color: ${getColor('text.2')};
+        background: ${getColor()};
+        color: ${getColor('text.active')};
         border-width: 0;
         outline: 0;
-        padding: 0.6rem 0.8rem;
+        padding: 0.5rem 0.8rem;
         border-radius: 5px;
-
-        &:active {
-          background: ${getColor('fill.button.1.active')};
-        }
       `}
       {...other}
     >

@@ -22,6 +22,18 @@ const PadHeight = React.memo(({
     .filter((child) => !!child && child.type), [children]);
 
   const elems = useMemo(() => {
+    if (list.length === 0) {
+      return {
+        padElem: null,
+        contents: [],
+      };
+    }
+    if (list.length === 1) {
+      return {
+        padElem: null,
+        contents: list[0],
+      };
+    }
     if (type === 'top') {
       const [topElem, ...contents] = list;
       return {
@@ -61,18 +73,20 @@ const PadHeight = React.memo(({
     };
   });
 
-  if (list.length <= 1) {
-    return (
-      <div
-        css={css`
+  const contents = useMemo(() => (
+    <div
+      css={css`
           height: 100%;
           position: relative;
         `}
-        className={className}
-      >
-        {list[0]}
-      </div>
-    );
+      className={className}
+    >
+      {elems.contents}
+    </div>
+  ), [elems.contents]);
+
+  if (list.length <= 1) {
+    return contents;
   }
 
   if (!padHeight) {
@@ -107,15 +121,7 @@ const PadHeight = React.memo(({
       >
         {elems.padElem}
       </div>
-      <div
-        css={css`
-          height: 100%;
-          position: relative;
-        `}
-        className={className}
-      >
-        {elems.contents}
-      </div>
+      {contents}
     </div>
   );
 });

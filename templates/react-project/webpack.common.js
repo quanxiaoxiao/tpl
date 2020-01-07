@@ -75,6 +75,7 @@ module.exports = {
   resolve: {
     modules: [
       path.resolve(__dirname, 'src'),
+      path.resolve(__dirname, 'src', 'pages'),
       'node_modules',
     ],
   },

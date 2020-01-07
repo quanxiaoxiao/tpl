@@ -49,8 +49,12 @@ const View = React.memo(() => {
     <Context.Provider
       value={{
         state,
-        dispatch,
-        actions,
+        actions: Object
+          .keys(actions)
+          .reduce((acc, actionName) => ({
+            ...acc,
+            [actionName]: (payload) => dispatch(actions[actionName](payload)),
+          }), {}),
       }}
     >
       <FontSizeContext.Provider

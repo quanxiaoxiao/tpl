@@ -1,48 +1,96 @@
 import { useState } from 'react';
 
 
-const useCurd = (data) => {
-  const [list, setList] = useState(data);
+const useCurd = (initArr = []) => {
+  const [list, setList] = useState(initArr);
+  const [size, setSize] = useState(initArr.length);
 
-  const update = (d) => {
-    const index = list.findIndex((item) => item.id === d.id);
+  const findIndex = (query) => {
+    if (size === 0) {
+      return -1;
+    }
+    const keys = Object.keys(query);
+    if (keys.length === 0) {
+      return 0;
+    }
+    return list.findIndex((item) => keys.every((key) => item[key] === query[key]));
+  };
+
+  const update = (query, d) => {
+    const index = findIndex(query);
     if (index === -1) {
       return index;
     }
-    if (index === 0) {
-      const [, ...other] = list;
-      setList([d, ...other]);
-    } else {
-      setList([...list.slice(0, index), d, ...list.slice(index + 1)]);
-    }
+    setList([...list.slice(0, index), { ...list[index], ...d }, ...list.slice(index + 1)]);
     return index;
   };
 
-  const remove = (id) => {
-    const index = list.findIndex((item) => item.id === id);
+  const remove = (query) => {
+    const index = findIndex(query);
     if (index === -1) {
       return index;
     }
-    if (index === 0) {
-      const [, ...other] = list;
-      setList(other);
-    } else {
-      setList([...list.slice(0, index), ...list.slice(index + 1)]);
-    }
+    setList([...list.slice(0, index), ...list.slice(index + 1)]);
+    setSize(size - 1);
     return index;
   };
 
-  const insert = (item) => {
-    setList([item, ...list]);
-    return item;
+  const insert = (item, query) => {
+    if (query) {
+      const index = findIndex(query);
+      if (index !== -1) {
+        const arr = [...list];
+        arr.splice(index, 0, item);
+        setList(arr);
+        setSize(size + 1);
+      }
+    } else {
+      setList([item, ...list]);
+      setSize(size + 1);
+    }
   };
 
-  const append = (item) => {
-    setList([...list, item]);
-    return item;
+  const append = (...args) => {
+    setList([...list, ...args]);
+    setSize(size + args.length);
   };
 
-  const change = (v) => setList(v);
+  const filter = (query) => {
+    if (size === 0) {
+      setList([]);
+    } else {
+      const keys = Object.keys(query);
+      if (keys.length === 0) {
+        setList([]);
+        setSize(0);
+      } else {
+        const nextList = list.filter((item) => !keys.every((key) => item[key] === query[key]));
+        setList(nextList);
+        setSize(nextList.length);
+      }
+    }
+  };
+
+  const find = (query) => {
+    const index = findIndex(query);
+    if (index === -1) {
+      return null;
+    }
+    return list[index];
+  };
+
+  const clear = () => {
+    setList([]);
+    setSize(0);
+  };
+
+  const change = (arr) => {
+    if (list.length === 0 && arr.length === 0) {
+      return;
+    }
+    setList(arr);
+    setSize(arr.length);
+  };
 
   return {
     list,
@@ -51,6 +99,10 @@ const useCurd = (data) => {
     remove,
     update,
     change,
+    clear,
+    size,
+    filter,
+    find,
   };
 };
 

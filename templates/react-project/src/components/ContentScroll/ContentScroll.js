@@ -200,6 +200,7 @@ const ContentScroll = React.memo(({
         css={css`
           position: relative;
           height: 100%;
+          outline: 0;
         `}
         {...other}
         ref={containerRef}

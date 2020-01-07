@@ -1,3 +1,7 @@
-import Svg from './Svg';
+import Container from './Container';
 
-export default Svg;
+export default Container;
+
+export useSize from './useSize';
+
+export G from './G';

@@ -1,12 +1,8 @@
-import { useRef, useContext, useEffect } from 'react';
-import Context from 'View/Context';
-import { actions } from 'View/reducer';
+import { useRef, useEffect } from 'react';
+import useReducer from 'View/useReducer';
 
 const useLoading = (pending) => {
-  const {
-    dispatch,
-    state,
-  } = useContext(Context);
+  const { state, actions } = useReducer();
   const mountSaved = useRef();
   const { loadingShow } = state;
   useEffect(() => {
@@ -19,14 +15,14 @@ const useLoading = (pending) => {
   useEffect(() => {
     if (pending) {
       if (!loadingShow) {
-        dispatch(actions.showLoading());
+        actions.showLoading();
       }
     } else if (loadingShow) {
-      dispatch(actions.hideLoading());
+      actions.hideLoading();
     }
     return () => {
       if (!mountSaved.current && loadingShow) {
-        dispatch(actions.hideLoading());
+        actions.hideLoading();
       }
     };
   }, [pending, loadingShow]);

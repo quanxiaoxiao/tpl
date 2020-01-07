@@ -4,7 +4,7 @@ import { jsx, css } from '@emotion/core';
 import _ from 'lodash';
 import useColumn from '../useColumn';
 
-const Row = React.memo((props) => {
+const Row = React.memo(({ ...props }) => {
   const { list: columnList } = useColumn();
 
   return (
@@ -12,7 +12,6 @@ const Row = React.memo((props) => {
       aria-label="row"
       css={css`
         display: flex;
-        flex-wrap: nowrap;
         align-items: center;
       `}
       {..._.omit(props, columnList.map((item) => item.key))}
