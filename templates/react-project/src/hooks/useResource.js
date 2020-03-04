@@ -1,32 +1,31 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-const useResource = (type = 'text') => {
+const useResource = (type = 'arrayBuffer') => {
   const inputSaved = useRef();
   const resultSaved = useRef();
 
-  const handleChange = (ev) => {
-    const { files } = ev.target;
-    const [file] = Array.from(files);
-    const reader = new FileReader();
-    reader.onload = ({ target: { result } }) => {
-      const data = {
-        result,
-        name: file.name,
-        mime: file.type,
-        size: result.byteLength,
+  useEffect(() => {
+    const handleChange = (ev) => {
+      const { files } = ev.target;
+      const [file] = Array.from(files);
+      const reader = new FileReader();
+      reader.onload = ({ target: { result } }) => {
+        const data = {
+          result,
+          name: file.name,
+          mime: file.type,
+          size: result.byteLength,
+        };
+        if (resultSaved.current) {
+          resultSaved.current(data);
+        }
       };
-      if (resultSaved.current) {
-        resultSaved.current(data);
+      if (type === 'text') {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
       }
     };
-    if (type === 'text') {
-      reader.readAsText(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    }
-  };
-
-  useEffect(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     inputSaved.current = input;
@@ -34,10 +33,11 @@ const useResource = (type = 'text') => {
     return () => {
       resultSaved.current = null;
       input.removeEventListener('change', handleChange);
+      input.remove();
     };
-  }, []);
+  }, [type]);
 
-  const getResource = async (accept) => {
+  const getResource = useCallback(async (accept) => {
     if (inputSaved.current) {
       const input = inputSaved.current;
       if (accept) {
@@ -56,7 +56,7 @@ const useResource = (type = 'text') => {
       return ret;
     }
     return null;
-  };
+  }, []);
 
   return getResource;
 };

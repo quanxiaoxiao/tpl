@@ -41,7 +41,7 @@ const Backdrop = React.memo(({ onClick, ...other }) => {
         height: 100vh;
         width: 100vw;
         z-index: 9999;
-        background: ${getColor('fill.backdrop')};
+        background: ${getColor('aa03')};
       `}
       onClick={handleClick}
       aria-label="backdrop"

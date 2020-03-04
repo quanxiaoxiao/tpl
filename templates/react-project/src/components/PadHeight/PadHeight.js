@@ -6,13 +6,17 @@ import React, {
   useMemo,
 } from 'react';
 import PropTypes from 'prop-types';
+import stylePropType from 'react-style-proptype';
 import { jsx, css } from '@emotion/core';
 import ResizeObserver from 'resize-observer-polyfill';
 
 const PadHeight = React.memo(({
   children,
   type = 'top',
+  style,
+  height = '100%',
   className,
+  ...other
 }) => {
   const [padHeight, setPadHeight] = useState(0);
 
@@ -80,32 +84,23 @@ const PadHeight = React.memo(({
           position: relative;
         `}
       className={className}
+      style={style}
     >
       {elems.contents}
     </div>
-  ), [elems.contents]);
+  ), [elems.contents, className, style]);
 
   if (list.length <= 1) {
-    return contents;
-  }
-
-  if (!padHeight) {
-    return (
-      <div
-        ref={headerRef}
-      >
-        {elems.padElem}
-      </div>
-    );
+    return React.cloneElement(contents, other);
   }
 
   return (
     <div
       style={{
         [type === 'top' ? 'paddingTop' : 'paddingBottom']: padHeight,
+        height,
       }}
       css={css`
-        height: 100%;
         position: relative;
       `}
     >
@@ -121,12 +116,16 @@ const PadHeight = React.memo(({
       >
         {elems.padElem}
       </div>
-      {contents}
+      {
+        React.cloneElement(contents, other)
+      }
     </div>
   );
 });
 
 PadHeight.propTypes = {
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  style: stylePropType,
   className: PropTypes.string,
   children: PropTypes.any, // eslint-disable-line
   type: PropTypes.oneOf(['top', 'bottom']),

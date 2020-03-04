@@ -15,6 +15,8 @@ const useRect = (containerWidth, containerHeight, margin) => {
     },
     width: Math.max(containerWidth - marginLeft - marginRight, 0),
     height: Math.max(containerHeight - marginTop - marginBottom, 0),
+    containerWidth,
+    containerHeight,
   }), [
     marginTop,
     marginLeft,

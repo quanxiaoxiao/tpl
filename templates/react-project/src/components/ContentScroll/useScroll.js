@@ -7,7 +7,9 @@ const useScroll = () => {
     scrollTop,
     clientHeight,
     scrollHeight,
+    scrolling,
     onScroll,
+    setScroll,
   } = useContext(Context);
 
   return {
@@ -16,6 +18,8 @@ const useScroll = () => {
     scrollHeight,
     percent: scrollHeight <= clientHeight ? 0 : scrollTop / (scrollHeight - clientHeight),
     onScroll,
+    setScroll,
+    scrolling,
   };
 };
 

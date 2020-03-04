@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import Context from './Context';
 
 
-const useSize = () => {
+const useBox = () => {
   const {
     containerWidth,
     containerHeight,
@@ -15,4 +15,4 @@ const useSize = () => {
 };
 
 
-export default useSize;
+export default useBox;

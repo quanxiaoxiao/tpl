@@ -4,10 +4,14 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import PropTypes from 'prop-types';
+import stylePropType from 'react-style-proptype';
+import ResizeObserver from 'resize-observer-polyfill';
 import Context from './Context';
 
-const Size = React.memo(({
+const Box = React.memo(({
   children,
+  className,
+  style,
   ...props
 }) => {
   const container = useRef();
@@ -33,16 +37,6 @@ const Size = React.memo(({
     };
   });
 
-  if (!containerWidth) {
-    return (
-      <div
-        ref={container}
-      >
-        &nbsp;
-      </div>
-    );
-  }
-
   return (
     <Context.Provider
       value={{
@@ -52,15 +46,20 @@ const Size = React.memo(({
     >
       <div
         ref={container}
+        style={style}
+        className={className}
+        {...props}
       >
-        {React.cloneElement(children, props)}
+        {children}
       </div>
     </Context.Provider>
   );
 });
 
-Size.propTypes = {
+Box.propTypes = {
+  className: PropTypes.string,
+  style: stylePropType,
   children: PropTypes.any, // eslint-disable-line
 };
 
-export default Size;
+export default Box;

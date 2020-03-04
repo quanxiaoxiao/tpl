@@ -9,7 +9,9 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
+import ResizeObserver from 'resize-observer-polyfill';
 import stylePropType from 'react-style-proptype';
+import _ from 'lodash';
 import Context from './Context';
 
 const performanceNow = () => window.performance.now();
@@ -20,11 +22,13 @@ const ContentScroll = React.memo(({
   scrollHeight,
   onScroll,
   children,
+  height = 0,
   style = {},
   ...other
 }) => {
-  const [clientHeight, setClientHeight] = useState(0);
+  const [clientHeight, setClientHeight] = useState(height);
   const [scrollTop, setScrollTop] = useState(0);
+  const [scrolling, setScroll] = useState(false);
   const containerRef = useRef();
   const animationStartSaved = useRef();
   const animationEndSaved = useRef();
@@ -33,6 +37,9 @@ const ContentScroll = React.memo(({
   const scrollTopTargetSaved = useRef();
 
   useLayoutEffect(() => {
+    if (height > 0) {
+      return () => {};
+    }
     let animationFrameID = null;
     const observer = new ResizeObserver((entries) => {
       const newClientHeight = entries[0].contentRect.height;
@@ -63,6 +70,9 @@ const ContentScroll = React.memo(({
   const cleanup = () => {
     if (animateFrameSaved.current) {
       window.cancelAnimationFrame(animateFrameSaved.current);
+    }
+    if (scrolling) {
+      setScroll(false);
     }
     animationStartSaved.current = null;
     animationEndSaved.current = null;
@@ -122,6 +132,10 @@ const ContentScroll = React.memo(({
         return;
       }
 
+      if (!scrolling) {
+        setScroll(true);
+      }
+
       if (scrollTopTargetSaved.current == null) {
         animateFrameSaved.current = window.requestAnimationFrame(animate);
       }
@@ -149,6 +163,14 @@ const ContentScroll = React.memo(({
     }
   };
 
+  const handleScroll = (v) => {
+    if (v >= 0
+      && scrollHeight > clientHeight
+      && v <= scrollHeight - clientHeight) {
+      setScrollTop(v);
+    }
+  };
+
   useEffect(() => {
     const handler = (ev) => {
       if (clientHeight < scrollHeight && containerRef.current.contains(ev.target)) {
@@ -168,32 +190,15 @@ const ContentScroll = React.memo(({
     };
   }, [clientHeight, scrollHeight]);
 
-  if (!clientHeight) {
-    return (
-      <div
-        css={css`
-          position: relative;
-          height: 100%;
-        `}
-        {...other}
-        ref={containerRef}
-        style={{
-          ...style,
-          overflow: 'hidden',
-        }}
-      >
-        &nbsp;
-      </div>
-    );
-  }
-
   return (
     <Context.Provider
       value={{
         scrollTop,
         clientHeight,
         scrollHeight,
-        onScroll: (v) => setScrollTop(v),
+        scrolling,
+        onScroll: handleScroll,
+        setScroll,
       }}
     >
       <div
@@ -208,8 +213,9 @@ const ContentScroll = React.memo(({
         onKeyDown={handleKeyDow}
         tabIndex={0}
         style={{
-          ...style,
+          ..._.omit(style, ['height']),
           overflow: 'hidden',
+          height: height !== 0 ? height : null,
         }}
       >
         {children}
@@ -221,6 +227,7 @@ const ContentScroll = React.memo(({
 ContentScroll.propTypes = {
   children: PropTypes.any, // eslint-disable-line
   style: stylePropType,
+  height: PropTypes.number,
   scrollHeight: PropTypes.number.isRequired,
   onScroll: PropTypes.func,
 };

@@ -14,6 +14,7 @@ const ScrollBar = React.memo(() => {
     percent,
     onScroll,
     scrollTop,
+    setScroll,
   } = useScroll();
 
   const scrollBarHeight = useMemo(() => {
@@ -52,16 +53,17 @@ const ScrollBar = React.memo(() => {
     document.removeEventListener('mouseup', handleMouseUpOnDoc);
     startPointerSaved.current = null;
     document.body.style.userSelect = null;
+    setScroll(false);
   };
 
   const handleMouseDown = (ev) => {
     ev.stopPropagation();
-    // ev.preventDefault();
     if (ev.target !== barRef.current) {
       const y = ev.clientY - ev.target.getBoundingClientRect().y;
       const percentTo = y / clientHeight;
       onScroll((scrollHeight - clientHeight) * percentTo);
     } else {
+      setScroll(true);
       document.body.style.userSelect = 'none';
       startPointerSaved.current = {
         x: ev.clientX,
@@ -73,7 +75,7 @@ const ScrollBar = React.memo(() => {
     }
   };
 
-  if (clientHeight >= scrollHeight) {
+  if (clientHeight === 0 || clientHeight >= scrollHeight) {
     return null;
   }
 

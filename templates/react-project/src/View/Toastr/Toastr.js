@@ -6,9 +6,8 @@ import Context from 'View/Context';
 import Item from './Item';
 
 const Toastr = React.memo(() => {
-  const {
-    state: { toastrList },
-  } = useContext(Context);
+  const { state } = useContext(Context);
+  const { toastrList } = state;
 
   return ReactDOM.createPortal((
     <Fragment>

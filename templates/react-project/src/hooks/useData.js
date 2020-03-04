@@ -1,5 +1,5 @@
 import {
-  useEffect,
+  useLayoutEffect,
   useState,
   useCallback,
   useRef,
@@ -12,7 +12,7 @@ const useData = (initData) => {
   }), {}));
   const originalSaved = useRef();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const original = Object
       .keys(initData)
       .reduce((acc, key) => ({
@@ -52,13 +52,15 @@ const useData = (initData) => {
     return ret;
   }, [data]);
 
-  const validation = useCallback((key) => {
+  const validation = useCallback((...args) => {
     if (!originalSaved.current) {
       return false;
     }
+    const [key, value] = args;
     if (key) {
       if (Object.hasOwnProperty.call(originalSaved.current, key)) {
-        return originalSaved.current[key].match(data[key]);
+        const { match } = originalSaved.current[key];
+        return args.length > 1 ? match(value) : match(data[key]);
       }
       return false;
     }

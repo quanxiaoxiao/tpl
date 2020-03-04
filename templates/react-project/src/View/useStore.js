@@ -2,16 +2,16 @@ import { useContext } from 'react';
 import Context from './Context';
 
 
-const useReducer = () => {
+const useStore = () => {
   const {
     state,
-    actions,
+    dispatch,
   } = useContext(Context);
 
   return {
     state,
-    actions,
+    dispatch,
   };
 };
 
-export default useReducer;
+export default useStore;

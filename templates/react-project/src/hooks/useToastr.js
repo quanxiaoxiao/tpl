@@ -1,13 +1,13 @@
-import useReducer from 'View/useReducer';
+import useStore from 'View/useStore';
 
 const useToastr = () => {
-  const { actions } = useReducer();
+  const { dispatch } = useStore();
   return {
     showLoading: () => {
-      actions.showLoading();
+      dispatch.showLoading();
     },
     hideLoading: () => {
-      actions.hideLoading();
+      dispatch.hideLoading();
     },
     ...[
       'info',
@@ -16,7 +16,7 @@ const useToastr = () => {
     ].reduce((acc, name) => ({
       ...acc,
       [name]: (message, { position, duration } = {}) => {
-        actions.addToastr({
+        dispatch.addToastr({
           type: name,
           message,
           position,

@@ -24,10 +24,6 @@ html {
   font-size: 100%;
 }
 
-body {
-  font-size: 100%;
-}
-
 *,
 *:before,
 *:after {

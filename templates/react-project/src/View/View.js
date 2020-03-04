@@ -8,11 +8,9 @@ import { BrowserRouter } from 'react-router-dom';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import colorData from 'colors.json';
-import sizeData from 'styles/sizes.json';
 
 import ColorContext from 'contexts/Color';
 import FontSizeContext from 'contexts/FontSize';
-import SizeContext from 'contexts/Size';
 import Toastr from './Toastr';
 import Loading from './Loading';
 
@@ -24,7 +22,6 @@ import Container from './Container';
 
 const View = React.memo(() => {
   const [color, setColor] = useState(colorData);
-  const [sizes, setSizes] = useState(sizeData);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [fontSize, setFontSize] = useState(parseFloat(getComputedStyle(document.body).fontSize)); // eslint-disable-line
 
@@ -49,7 +46,7 @@ const View = React.memo(() => {
     <Context.Provider
       value={{
         state,
-        actions: Object
+        dispatch: Object
           .keys(actions)
           .reduce((acc, actionName) => ({
             ...acc,
@@ -66,18 +63,11 @@ const View = React.memo(() => {
             onChange: (v) => setColor(v),
           }}
         >
-          <SizeContext.Provider
-            value={{
-              sizes,
-              onChange: (v) => setSizes(v),
-            }}
-          >
-            <BrowserRouter>
-              <Container />
-            </BrowserRouter>
-            <Toastr />
-            <Loading />
-          </SizeContext.Provider>
+          <BrowserRouter>
+            <Container />
+          </BrowserRouter>
+          <Toastr />
+          <Loading />
         </ColorContext.Provider>
       </FontSizeContext.Provider>
     </Context.Provider>

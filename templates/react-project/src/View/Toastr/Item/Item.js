@@ -2,7 +2,6 @@
 import React, {
   useEffect,
   useCallback,
-  useContext,
   useState,
   useMemo,
 } from 'react';
@@ -11,8 +10,7 @@ import _ from 'lodash';
 import { jsx, css } from '@emotion/core';
 import useColor from 'hooks/useColor';
 import Icon from 'components/Icon';
-import Context from 'View/Context';
-import { actions } from 'View/reducer';
+import useStore from 'View/useStore';
 
 const Item = React.memo(({
   type,
@@ -23,13 +21,13 @@ const Item = React.memo(({
 }) => {
   const getColor = useColor();
   const [isActive, setActive] = useState(false);
-  const { dispatch } = useContext(Context);
+  const { dispatch } = useStore();
 
   useEffect(() => {
     let timer;
     if (!isActive) {
       timer = setTimeout(() => {
-        dispatch(actions.removeToastr(id));
+        dispatch.removeToastr(id);
       }, duration);
     }
     return () => {
@@ -57,7 +55,7 @@ const Item = React.memo(({
   }, []);
 
   const handleClickOnRemove = useCallback(() => {
-    dispatch(actions.removeToastr(id));
+    dispatch.removeToastr(id);
   }, [id]);
 
   return (

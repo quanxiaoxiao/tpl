@@ -1,21 +1,16 @@
 import { useContext } from 'react';
-import _ from 'lodash';
 import ColorContext from 'contexts/Color';
 
 const useColor = () => {
   const { data } = useContext(ColorContext);
-  const list = data._ || [];
 
-  const getColor = (prop = 'default') => {
-    let index = _.get(data.data, prop);
-    if (_.isPlainObject(index)) {
-      index = _.get(index, 'default');
+  const getColor = (key) => {
+    const value = data[key];
+    if (!value) {
+      console.warn(`color: ${key} unset`);
+      return null;
     }
-    if (index == null) {
-      console.warn(`color: ${prop} unset`);
-      return '#f00';
-    }
-    return list[index];
+    return value;
   };
 
   return getColor;

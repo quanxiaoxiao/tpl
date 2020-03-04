@@ -48,8 +48,8 @@ const useActionDo = (params, options) => {
       waitingSaved.current = false;
       setTimeout(() => {
         lastParamsSaved.current = paramsSaved.current;
-        action(lastParamsSaved.current, ...argsSaved.args);
-        argsSaved.args = null;
+        action(lastParamsSaved.current, ...argsSaved.current);
+        argsSaved.current = null;
       }, 0);
     }
   }, [action, pending]);

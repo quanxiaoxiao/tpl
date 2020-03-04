@@ -30,16 +30,6 @@ const Content = React.memo(({
     };
   });
 
-  if (!scrollHeight) {
-    return (
-      <div
-        ref={container}
-      >
-        &nbsp;
-      </div>
-    );
-  }
-
   return (
     <div
       ref={container}

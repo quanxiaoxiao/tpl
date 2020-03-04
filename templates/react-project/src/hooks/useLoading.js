@@ -1,8 +1,8 @@
 import { useRef, useEffect } from 'react';
-import useReducer from 'View/useReducer';
+import useStore from 'View/useStore';
 
 const useLoading = (pending) => {
-  const { state, actions } = useReducer();
+  const { state, dispatch } = useStore();
   const mountSaved = useRef();
   const { loadingShow } = state;
   useEffect(() => {
@@ -15,14 +15,14 @@ const useLoading = (pending) => {
   useEffect(() => {
     if (pending) {
       if (!loadingShow) {
-        actions.showLoading();
+        dispatch.showLoading();
       }
     } else if (loadingShow) {
-      actions.hideLoading();
+      dispatch.hideLoading();
     }
     return () => {
       if (!mountSaved.current && loadingShow) {
-        actions.hideLoading();
+        dispatch.hideLoading();
       }
     };
   }, [pending, loadingShow]);
