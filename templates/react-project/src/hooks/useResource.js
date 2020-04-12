@@ -22,6 +22,10 @@ const useResource = (type = 'arrayBuffer') => {
       };
       if (type === 'text') {
         reader.readAsText(file);
+      } else if (type === 'blob') {
+        if (resultSaved.current) {
+          resultSaved.current(file);
+        }
       } else {
         reader.readAsArrayBuffer(file);
       }

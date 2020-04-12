@@ -40,10 +40,25 @@ const Backdrop = React.memo(({ onClick, ...other }) => {
         left: 0;
         height: 100vh;
         width: 100vw;
-        z-index: 9999;
-        background: ${getColor('aa03')};
+        z-index: 99;
+        background: ${getColor('a13')};
       `}
       onClick={handleClick}
+      onWheel={(ev) => {
+        ev.stopPropagation();
+      }}
+      onMouseEnter={(ev) => {
+        ev.stopPropagation();
+      }}
+      onMouseLeave={(ev) => {
+        ev.stopPropagation();
+      }}
+      onMouseDown={(ev) => {
+        ev.stopPropagation();
+      }}
+      onMouseUp={(ev) => {
+        ev.stopPropagation();
+      }}
       aria-label="backdrop"
       {...other}
     />

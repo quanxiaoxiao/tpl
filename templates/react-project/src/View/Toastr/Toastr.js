@@ -15,8 +15,9 @@ const Toastr = React.memo(() => {
         css={css`
           position: fixed;
           top: 1rem;
-          right: 1rem;
-          z-index: 999;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 101;
           > div:not(:last-child) {
             margin-bottom: 0.8rem;
           }

@@ -3,11 +3,8 @@ import useStore from 'View/useStore';
 const useToastr = () => {
   const { dispatch } = useStore();
   return {
-    showLoading: () => {
-      dispatch.showLoading();
-    },
-    hideLoading: () => {
-      dispatch.hideLoading();
+    clear: () => {
+      dispatch.clearToastr();
     },
     ...[
       'info',

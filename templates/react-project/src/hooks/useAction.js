@@ -1,8 +1,8 @@
 import {
   useState,
-  useEffect,
   useRef,
   useCallback,
+  useLayoutEffect,
 } from 'react';
 
 const useAction = (options) => {
@@ -20,12 +20,12 @@ const useAction = (options) => {
   const matchSaved = useRef(match);
   const mounted = useRef();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     matchSaved.current = match;
     actionSaved.current = fn;
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;

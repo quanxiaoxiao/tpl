@@ -8,7 +8,7 @@ import useAction from './useAction';
 
 const useActionDo = (params, options) => {
   const waitingSaved = useRef(false);
-  const argsSaved = useRef();
+  const argsSaved = useRef([]);
   const paramsSaved = useRef();
   const lastParamsSaved = useRef();
 
@@ -35,6 +35,7 @@ const useActionDo = (params, options) => {
       waitingSaved.current = true;
       argsSaved.current = args;
     } else {
+      argsSaved.current = [];
       lastParamsSaved.current = paramsSaved.current;
       action(paramsSaved.current, ...args);
     }
@@ -49,7 +50,7 @@ const useActionDo = (params, options) => {
       setTimeout(() => {
         lastParamsSaved.current = paramsSaved.current;
         action(lastParamsSaved.current, ...argsSaved.current);
-        argsSaved.current = null;
+        argsSaved.current = [];
       }, 0);
     }
   }, [action, pending]);

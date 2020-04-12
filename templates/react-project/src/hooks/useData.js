@@ -10,7 +10,16 @@ const useData = (initData) => {
     ...acc,
     [key]: initData[key].value,
   }), {}));
-  const originalSaved = useRef();
+  const originalSaved = useRef(Object
+    .keys(initData)
+    .reduce((acc, key) => ({
+      ...acc,
+      [key]: {
+        value: initData[key].value,
+        output: initData[key].output || ((v) => v),
+        match: initData[key].match || (() => true),
+      },
+    }), {}));
 
   useLayoutEffect(() => {
     const original = Object
@@ -47,7 +56,7 @@ const useData = (initData) => {
       .keys(data)
       .reduce((acc, key) => ({
         ...acc,
-        [key]: originalSaved.current[key].output(data[key]),
+        [key]: originalSaved.current[key].output(data[key], data),
       }), {});
     return ret;
   }, [data]);

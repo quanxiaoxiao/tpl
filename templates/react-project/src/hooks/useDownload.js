@@ -6,7 +6,7 @@ const useDownload = () => {
     name,
     mime,
   }) => {
-    const blob = new Blob([data], { type: mime });
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
     const objectURL = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.download = name;

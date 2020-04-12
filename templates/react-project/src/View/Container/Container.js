@@ -18,12 +18,15 @@ const Container = React.memo(() => {
     <Fragment>
       <Global
         styles={css`
-        ${emotionNormalize}
-        ${initStyle}
-        body {
-          color: ${getColor('text')};
-          background: ${getColor('fill.background')};
-        }
+          ${emotionNormalize}
+          ${initStyle}
+          body {
+            color: ${getColor('a08')};
+            background: ${getColor('a03')};
+            input::placeholder {
+              color: ${getColor('a0f')};
+            }
+          }
         `}
       />
       <Switch>

@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { jsx, css } from '@emotion/core';
 import useColor from 'hooks/useColor';
-import Icon from 'components/Icon';
 import useStore from 'View/useStore';
+import { IconBtn } from 'components/Display';
 
 const Item = React.memo(({
   type,
@@ -22,6 +22,11 @@ const Item = React.memo(({
   const getColor = useColor();
   const [isActive, setActive] = useState(false);
   const { dispatch } = useStore();
+  const map = {
+    info: getColor('a01'),
+    error: getColor('a0e'),
+    warning: getColor('a12'),
+  };
 
   useEffect(() => {
     let timer;
@@ -63,16 +68,15 @@ const Item = React.memo(({
       css={css`
         height: 3.6rem;
         width: 14rem;
-        background: #ccc;
         padding: 0 0.8rem;
         display: flex;
         align-items: center;
         border-radius: 3px;
         box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-        color: ${getColor('fill')};
+        color: ${getColor('a04')};
         white-space: nowrap;
         overflow: hidden;
-        background: ${getColor(type)};
+        background: ${map[type]};
         justify-content: space-between;
       `}
       onMouseEnter={handleMouseEnter}
@@ -82,26 +86,25 @@ const Item = React.memo(({
       <span>
         {message}
       </span>
-
-      <a
+      <IconBtn
+        code="e72d"
         onClick={handleClickOnRemove}
-      >
-        <Icon
-          css={css`
-            display: block;
-            width: 0.8rem;
-            height: 0.8rem;
-          `}
-          color={getColor('fill')}
-          code="e63a"
-        />
-      </a>
+        color={getColor('a04')}
+        css={css`
+          width: 1.2rem;
+          height: 1.2rem;
+        `}
+      />
     </div>
   );
 });
 
 Item.propTypes = {
-  type: PropTypes.string.isRequired,
+  type: PropTypes.oneOf([
+    'info',
+    'error',
+    'warning',
+  ]).isRequired,
   message: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   duration: PropTypes.number,

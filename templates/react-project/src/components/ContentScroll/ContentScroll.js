@@ -6,6 +6,8 @@ import React, {
   useEffect,
   useRef,
   useLayoutEffect,
+  useCallback,
+  useMemo,
 } from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
@@ -23,12 +25,13 @@ const ContentScroll = React.memo(({
   onScroll,
   children,
   height = 0,
-  style = {},
+  style,
   ...other
 }) => {
   const [clientHeight, setClientHeight] = useState(height);
   const [scrollTop, setScrollTop] = useState(0);
   const [scrolling, setScroll] = useState(false);
+  const [isEnter, setEnter] = useState(false);
   const containerRef = useRef();
   const animationStartSaved = useRef();
   const animationEndSaved = useRef();
@@ -148,28 +151,42 @@ const ContentScroll = React.memo(({
     }
   };
 
-  const handleWheel = (ev) => {
+  const handleWheel = useCallback((ev) => {
     if (clientHeight < scrollHeight) {
       ev.stopPropagation();
       scroll(ev.deltaY / 2 * PIXEL_STEP + scrollTop);
     }
-  };
+  }, [scrollTop, clientHeight, scrollHeight]);
 
-  const handleKeyDow = (ev) => {
+  const handleKeyDow = useCallback((ev) => {
     if (ev.keyCode === 40) {
       scroll(scrollTop + 50);
     } else if (ev.keyCode === 38) {
       scroll(scrollTop - 50);
     }
-  };
+  }, [scrollTop]);
 
-  const handleScroll = (v) => {
+  const handleScroll = useCallback((v) => {
     if (v >= 0
       && scrollHeight > clientHeight
       && v <= scrollHeight - clientHeight) {
       setScrollTop(v);
     }
-  };
+  }, [scrollHeight, clientHeight]);
+
+  const containerStyle = useMemo(() => {
+    if (style) {
+      return {
+        ..._.omit(style, ['height']),
+        overflow: 'hidden',
+        height: height !== 0 ? height : null,
+      };
+    }
+    return {
+      overflow: 'hidden',
+      height: height !== 0 ? height : null,
+    };
+  }, [height, style]);
 
   useEffect(() => {
     const handler = (ev) => {
@@ -190,6 +207,13 @@ const ContentScroll = React.memo(({
     };
   }, [clientHeight, scrollHeight]);
 
+  const handleMouseEnter = useCallback(() => {
+    setEnter(true);
+  }, []);
+  const handleMouseLeave = useCallback(() => {
+    setEnter(false);
+  }, []);
+
   return (
     <Context.Provider
       value={{
@@ -199,6 +223,7 @@ const ContentScroll = React.memo(({
         scrolling,
         onScroll: handleScroll,
         setScroll,
+        isEnter,
       }}
     >
       <div
@@ -211,12 +236,10 @@ const ContentScroll = React.memo(({
         ref={containerRef}
         onWheel={handleWheel}
         onKeyDown={handleKeyDow}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         tabIndex={0}
-        style={{
-          ..._.omit(style, ['height']),
-          overflow: 'hidden',
-          height: height !== 0 ? height : null,
-        }}
+        style={containerStyle}
       >
         {children}
       </div>

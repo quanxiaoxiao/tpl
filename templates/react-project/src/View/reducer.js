@@ -15,6 +15,10 @@ const { actions, reducer } = createReducer({
     ...state,
     loadingShow: false,
   }),
+  clearToastr: (state) => ({
+    ...state,
+    toastrList: [],
+  }),
   addToastr: (state, payload) => ({
     ...state,
     toastrList: [...state.toastrList, { ...payload, id: _.uniqueId('toastr_') }],

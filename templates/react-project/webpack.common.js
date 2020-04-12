@@ -48,7 +48,7 @@ module.exports = {
         },
         lib: {
           chunks: 'all',
-          test: ({ resource }) => resource && /node_modules\/(moment|lodash|immutable)(?!\w)/.test(resource),
+          test: ({ resource }) => resource && /node_modules\/(moment|lodash)(?!\w)/.test(resource),
           name: 'lib',
           enforce: true,
           priority: 9,
