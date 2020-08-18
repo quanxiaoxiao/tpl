@@ -33,7 +33,7 @@ const useData = (initData) => {
         },
       }), {});
     originalSaved.current = original;
-  });
+  }, [initData]);
 
   const setValue = useCallback((key, value) => {
     if (typeof key === 'function') {
@@ -51,7 +51,10 @@ const useData = (initData) => {
 
   const getValue = useCallback((key) => data[key], [data]);
 
-  const output = useCallback(() => {
+  const output = useCallback((dataKey) => {
+    if (dataKey) {
+      return originalSaved.current[dataKey].output(data[dataKey], data);
+    }
     const ret = Object
       .keys(data)
       .reduce((acc, key) => ({
@@ -61,32 +64,51 @@ const useData = (initData) => {
     return ret;
   }, [data]);
 
-  const validation = useCallback((...args) => {
+  const validate = useCallback((...args) => {
     if (!originalSaved.current) {
-      return false;
+      return [null, null, ''];
     }
-    const [key, value] = args;
-    if (key) {
-      if (Object.hasOwnProperty.call(originalSaved.current, key)) {
-        const { match } = originalSaved.current[key];
-        return args.length > 1 ? match(value) : match(data[key]);
+    if (args.length !== 0) {
+      const [dataKey] = args;
+      if (Object.hasOwnProperty.call(originalSaved.current, dataKey)) {
+        const item = originalSaved.current[dataKey];
+        const value = data[dataKey];
+        try {
+          const ret = item.match(value, getValue, validate);
+          if (ret) {
+            return null;
+          }
+          return [dataKey, value, ''];
+        } catch (error) {
+          return [dataKey, value, error.message];
+        }
       }
-      return false;
+      return [dataKey, null, `\`${dataKey}\` not register`];
     }
-    return Object.keys(data).every((k) => {
-      const item = originalSaved.current[k];
-      return item.match(data[k], getValue, validation);
-    });
-  }, [data]);
+    const keys = Object.keys(data);
+    for (let i = 0; i < keys.length; i++) {
+      const dataKey = keys[i];
+      const value = data[dataKey];
+      const item = originalSaved.current[dataKey];
+      try {
+        const ret = item.match(value, getValue, validate);
+        if (!ret) {
+          return [dataKey, value, ''];
+        }
+      } catch (error) {
+        return [dataKey, value, error.message];
+      }
+    }
+    return null;
+  }, [data, getValue]);
 
   return {
     setValue,
     getValue,
     output,
-    validation,
     data,
+    validate,
   };
 };
-
 
 export default useData;

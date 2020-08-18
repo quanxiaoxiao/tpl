@@ -1,11 +1,9 @@
 /** @jsx jsx */
 import React, { useState, useRef, useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
-import useColor from 'hooks/useColor';
 import useScroll from '../useScroll';
 
 const ScrollBar = React.memo(() => {
-  const getColor = useColor();
   const [isActive, setActive] = useState(false);
   const barRef = useRef();
   const startPointerSaved = useRef();
@@ -61,6 +59,7 @@ const ScrollBar = React.memo(() => {
 
   const handleMouseDown = (ev) => {
     ev.stopPropagation();
+    ev.preventDefault();
     setActive(true);
     if (ev.target !== barRef.current) {
       const y = ev.clientY - ev.target.getBoundingClientRect().y;
@@ -108,7 +107,7 @@ const ScrollBar = React.memo(() => {
           left: 0;
           width: 100%;
           border-radius: 3px;
-          background: ${getColor('a0d')};
+          background: rgba(0, 0, 0, 0.25);
         `}
         ref={barRef}
         style={{

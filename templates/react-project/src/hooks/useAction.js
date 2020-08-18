@@ -7,22 +7,14 @@ import {
 
 const useAction = (options) => {
   const [pending, setPending] = useState(false);
-  const {
-    fn,
-    pre = () => {},
-    match = () => true,
-    resolve = () => {},
-    reject = () => {},
-    final = () => {},
-  } = options;
 
-  const actionSaved = useRef(fn);
-  const matchSaved = useRef(match);
+  const actionSaved = useRef(options.fn);
+  const matchSaved = useRef(options.match);
   const mounted = useRef();
 
   useLayoutEffect(() => {
-    matchSaved.current = match;
-    actionSaved.current = fn;
+    matchSaved.current = options.match;
+    actionSaved.current = options.fn;
   });
 
   useLayoutEffect(() => {
@@ -33,29 +25,32 @@ const useAction = (options) => {
   }, []);
 
   const action = useCallback(async (...args) => {
-    if (!mounted.current || pending || !matchSaved.current(...args)) {
+    if (!mounted.current || pending || (matchSaved.current && !matchSaved.current(...args))) {
       return;
     }
-    pre();
+    if (options.pre) {
+      options.pre();
+    }
     setPending(true);
     try {
       const ret = await actionSaved.current(...args);
-      if (mounted.current) {
-        resolve(ret);
+      if (mounted.current && options.resolve) {
+        options.resolve(ret);
       }
     } catch (error) {
-      if (mounted.current) {
-        reject(error);
+      if (mounted.current && options.reject) {
+        options.reject(error);
       }
       console.error(error);
     } finally {
       if (mounted.current) {
         setPending(false);
-        final();
+        if (options.final) {
+          options.final();
+        }
       }
     }
   }, [pending, options]);
-
 
   return {
     action,

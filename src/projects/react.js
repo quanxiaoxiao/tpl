@@ -12,6 +12,7 @@ module.exports = (projectName) => {
     '@emotion/core',
     '@emotion/styled',
     'emotion-normalize',
+    'chrome-js',
     'resize-observer-polyfill',
     'history',
     'lodash',

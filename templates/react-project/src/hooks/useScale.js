@@ -40,13 +40,12 @@ const calc = (size, range) => {
     });
 };
 
-
 const useScale = (size, range) => {
   const [list, setList] = useState(calc(size, range));
 
   useEffect(() => {
     setList(calc(size, range));
-  }, [size, ...range]);
+  }, [size, range.join(',')]); // eslint-disable-line
 
   return list;
 };

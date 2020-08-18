@@ -1,6 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const common = require('./webpack.common');

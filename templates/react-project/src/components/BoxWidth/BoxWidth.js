@@ -26,11 +26,11 @@ const BoxWidth = React.memo(({
     let animationFrameID = null;
     const observer = new ResizeObserver((entries) => {
       const newContainerWidth = entries[0].contentRect.width;
-      if (newContainerWidth !== containerWidth) {
-        animationFrameID = window.requestAnimationFrame(() => {
+      animationFrameID = window.requestAnimationFrame(() => {
+        if (newContainerWidth !== containerWidth) {
           setContainerWidth(newContainerWidth);
-        });
-      }
+        }
+      });
     });
     observer.observe(containerRef.current);
     return () => {

@@ -23,12 +23,12 @@ const Box = React.memo(({
     const observer = new ResizeObserver((entries) => {
       const newContainerWidth = entries[0].contentRect.width;
       const newContainerHeight = entries[0].contentRect.height;
-      if (newContainerWidth !== containerWidth || newContainerHeight !== containerHeight) {
-        animationFrameID = window.requestAnimationFrame(() => {
+      animationFrameID = window.requestAnimationFrame(() => {
+        if (newContainerWidth !== containerWidth || newContainerHeight !== containerHeight) {
           setContainerWidth(newContainerWidth);
           setContainerHeight(newContainerHeight);
-        });
-      }
+        }
+      });
     });
     observer.observe(container.current);
     return () => {

@@ -25,7 +25,7 @@ const useLoading = (pending) => {
         dispatch.hideLoading();
       }
     };
-  }, [pending, loadingShow]);
+  }, [pending, loadingShow, dispatch]);
 };
 
 

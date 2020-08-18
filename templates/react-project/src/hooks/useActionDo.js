@@ -26,10 +26,6 @@ const useActionDo = (params, options) => {
     action,
   } = useAction(actionOptions);
 
-  useEffect(() => {
-    paramsSaved.current = params;
-  }, [params]);
-
   const executeAction = useCallback((...args) => {
     if (pending) {
       waitingSaved.current = true;
@@ -41,17 +37,21 @@ const useActionDo = (params, options) => {
     }
   }, [action, pending]);
 
-
-  useEffect(executeAction, [params]);
+  useEffect(() => {
+    if (paramsSaved.current !== params) {
+      paramsSaved.current = params;
+      executeAction();
+    }
+  }, [params, executeAction]);
 
   useEffect(() => {
     if (!pending && waitingSaved.current) {
       waitingSaved.current = false;
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         lastParamsSaved.current = paramsSaved.current;
         action(lastParamsSaved.current, ...argsSaved.current);
         argsSaved.current = [];
-      }, 0);
+      });
     }
   }, [action, pending]);
 

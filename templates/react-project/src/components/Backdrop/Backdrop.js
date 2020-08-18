@@ -3,11 +3,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { jsx, css } from '@emotion/core';
-import useColor from 'hooks/useColor';
 
 const Backdrop = React.memo(({ onClick, ...other }) => {
-  const getColor = useColor();
-
   const handleClick = (ev) => {
     ev.stopPropagation();
     if (onClick) {
@@ -40,31 +37,16 @@ const Backdrop = React.memo(({ onClick, ...other }) => {
         left: 0;
         height: 100vh;
         width: 100vw;
-        z-index: 99;
-        background: ${getColor('a13')};
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.6);
       `}
       onClick={handleClick}
-      onWheel={(ev) => {
-        ev.stopPropagation();
-      }}
-      onMouseEnter={(ev) => {
-        ev.stopPropagation();
-      }}
-      onMouseLeave={(ev) => {
-        ev.stopPropagation();
-      }}
-      onMouseDown={(ev) => {
-        ev.stopPropagation();
-      }}
-      onMouseUp={(ev) => {
-        ev.stopPropagation();
-      }}
       aria-label="backdrop"
+      onWheel={(ev) => ev.stopPropagation()}
       {...other}
     />
   ), document.body);
 });
-
 
 Backdrop.propTypes = {
   onClick: PropTypes.func,

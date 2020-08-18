@@ -40,25 +40,29 @@ const ContentScroll = React.memo(({
   const scrollTopTargetSaved = useRef();
 
   useLayoutEffect(() => {
-    if (height > 0) {
-      return () => {};
-    }
     let animationFrameID = null;
-    const observer = new ResizeObserver((entries) => {
-      const newClientHeight = entries[0].contentRect.height;
-      animationFrameID = window.requestAnimationFrame(() => {
-        if (newClientHeight !== clientHeight) {
-          setClientHeight(newClientHeight);
-        }
+    let observer;
+    if (height === 0) {
+      observer = new ResizeObserver((entries) => {
+        const newClientHeight = entries[0].contentRect.height;
+        animationFrameID = window.requestAnimationFrame(() => {
+          if (newClientHeight !== clientHeight) {
+            setClientHeight(newClientHeight);
+          }
+        });
       });
-    });
-    observer.observe(containerRef.current);
+      observer.observe(containerRef.current);
+    } else if (height !== clientHeight) {
+      setClientHeight(height);
+    }
 
     return () => {
-      observer.disconnect();
-      window.cancelAnimationFrame(animationFrameID);
+      if (observer) {
+        observer.disconnect();
+        window.cancelAnimationFrame(animationFrameID);
+      }
     };
-  });
+  }, [height, clientHeight, setClientHeight]);
 
   useEffect(() => {
     if (clientHeight >= scrollHeight) {
@@ -70,21 +74,38 @@ const ContentScroll = React.memo(({
     }
   }, [clientHeight, scrollHeight, scrollTop]);
 
-  const cleanup = () => {
+  useEffect(() => {
+    const handler = (ev) => {
+      if (clientHeight < scrollHeight && containerRef.current.contains(ev.target)) {
+        ev.preventDefault();
+        ev.returnValue = false; // eslint-disable-line
+      }
+    };
+    window.addEventListener('DOMMouseScroll', handler, false);
+    document.addEventListener('wheel', handler, { passive: false });
+    window.onwheel = handler;
+    window.ontouchmove = handler;
+    return () => {
+      window.removeEventListener('DOMMouseScroll', handler, false);
+      document.removeEventListener('wheel', handler, { passive: false });
+      window.onwheel = null;
+      window.ontouchmove = null;
+    };
+  }, [clientHeight, scrollHeight]);
+
+  const cleanup = useCallback(() => {
     if (animateFrameSaved.current) {
       window.cancelAnimationFrame(animateFrameSaved.current);
     }
-    if (scrolling) {
-      setScroll(false);
-    }
+    setScroll(false);
     animationStartSaved.current = null;
     animationEndSaved.current = null;
     scrollTopStartSaved.current = null;
     scrollTopTargetSaved.current = null;
     animateFrameSaved.current = null;
-  };
+  }, [setScroll]);
 
-  const animate = (timestamp) => {
+  const animate = useCallback((timestamp) => {
     if (scrollTopTargetSaved.current === scrollTopStartSaved.current) {
       setScrollTop(scrollTopTargetSaved.current);
       cleanup();
@@ -102,7 +123,7 @@ const ContentScroll = React.memo(({
       }
       animateFrameSaved.current = window.requestAnimationFrame(animate);
     }
-  };
+  }, [cleanup, setScrollTop]);
 
   useEffect(() => {
     if (scrollTopTargetSaved.current != null && scrollTopTargetSaved.current === scrollTop) {
@@ -111,9 +132,9 @@ const ContentScroll = React.memo(({
     if (onScroll) {
       onScroll(scrollTop);
     }
-  }, [scrollTop]);
+  }, [scrollTop, onScroll, cleanup]);
 
-  const scroll = (target) => {
+  const scroll = useCallback((target) => {
     if (clientHeight < scrollHeight) {
       if (animationStartSaved.current && performanceNow() - animationStartSaved.current < 40) {
         return;
@@ -149,14 +170,14 @@ const ContentScroll = React.memo(({
       scrollTopStartSaved.current = scrollTop;
       scrollTopTargetSaved.current = target;
     }
-  };
+  }, [scrolling, scrollHeight, clientHeight, setScroll, scrollTop, cleanup, animate]);
 
   const handleWheel = useCallback((ev) => {
     if (clientHeight < scrollHeight) {
       ev.stopPropagation();
       scroll(ev.deltaY / 2 * PIXEL_STEP + scrollTop);
     }
-  }, [scrollTop, clientHeight, scrollHeight]);
+  }, [scrollTop, clientHeight, scrollHeight, scroll]);
 
   const handleKeyDow = useCallback((ev) => {
     if (ev.keyCode === 40) {
@@ -164,7 +185,7 @@ const ContentScroll = React.memo(({
     } else if (ev.keyCode === 38) {
       scroll(scrollTop - 50);
     }
-  }, [scrollTop]);
+  }, [scrollTop, scroll]);
 
   const handleScroll = useCallback((v) => {
     if (v >= 0
@@ -188,28 +209,10 @@ const ContentScroll = React.memo(({
     };
   }, [height, style]);
 
-  useEffect(() => {
-    const handler = (ev) => {
-      if (clientHeight < scrollHeight && containerRef.current.contains(ev.target)) {
-        ev.preventDefault();
-        ev.returnValue = false; // eslint-disable-line
-      }
-    };
-    window.addEventListener('DOMMouseScroll', handler, false);
-    document.addEventListener('wheel', handler, { passive: false });
-    window.onwheel = handler;
-    window.ontouchmove = handler;
-    return () => {
-      window.removeEventListener('DOMMouseScroll', handler, false);
-      document.removeEventListener('wheel', handler, { passive: false });
-      window.onwheel = null;
-      window.ontouchmove = null;
-    };
-  }, [clientHeight, scrollHeight]);
-
   const handleMouseEnter = useCallback(() => {
     setEnter(true);
   }, []);
+
   const handleMouseLeave = useCallback(() => {
     setEnter(false);
   }, []);

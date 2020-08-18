@@ -1,21 +1,27 @@
 import { useMemo, useContext } from 'react';
 import Context from './Context';
 
-
 const useScroll = () => {
   const state = useContext(Context);
+  const {
+    scrollTop = 0,
+    scrollHeight = 0,
+    clientHeight = 0,
+    onScroll,
+    setScroll,
+    scrolling,
+    isEnter,
+  } = (state || {});
+
   const percent = useMemo(() => {
-    if (!state) {
+    if (scrollHeight === 0 || clientHeight === 0) {
       return 0;
     }
-    if (state.scrollHeight === 0 || state.clientHeight === 0) {
+    if (scrollHeight <= clientHeight) {
       return 0;
     }
-    if (state.scrollHeight <= state.clientHeight) {
-      return 0;
-    }
-    return state.scrollTop / (state.scrollHeight - state.clientHeight);
-  }, [state]);
+    return scrollTop / (scrollHeight - clientHeight);
+  }, [scrollTop, scrollHeight, clientHeight]);
 
   if (!state) {
     return {
@@ -30,15 +36,14 @@ const useScroll = () => {
 
   return {
     percent,
-    scrollTop: state.scrollTop,
-    clientHeight: state.clientHeight,
-    scrollHeight: state.scrollHeight,
-    onScroll: state.onScroll,
-    setScroll: state.setScroll,
-    scrolling: state.scrolling,
-    isEnter: state.isEnter,
+    scrollTop,
+    clientHeight,
+    scrollHeight,
+    scrolling,
+    isEnter,
+    onScroll,
+    setScroll,
   };
 };
-
 
 export default useScroll;

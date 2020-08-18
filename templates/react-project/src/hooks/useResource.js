@@ -65,5 +65,4 @@ const useResource = (type = 'arrayBuffer') => {
   return getResource;
 };
 
-
 export default useResource;

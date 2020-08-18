@@ -2,11 +2,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
+import chroma from 'chroma-js';
 import useColor from 'hooks/useColor';
 import Icon from 'components/Icon';
 
 const IconBtn = React.memo(({
   code,
+  color,
   ...other
 }) => {
   const getColor = useColor();
@@ -21,6 +23,10 @@ const IconBtn = React.memo(({
           outline: unset;
           background: rgba(0, 0, 0, 0);
           display: inline-block;
+          color: ${color || getColor('a08')};
+          &:active {
+            color: ${chroma(color || getColor('a08')).darken(0.3).css()};
+          }
         `}
       {...other}
     >
@@ -31,13 +37,14 @@ const IconBtn = React.memo(({
             display: block;
           `}
         code={code}
-        color={getColor('a03')}
+        color="currentColor"
       />
     </button>
   );
 });
 
 IconBtn.propTypes = {
+  color: PropTypes.string,
   code: PropTypes.string.isRequired,
 };
 
