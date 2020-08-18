@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Backdrop from 'components/Backdrop';
 import Spinner from 'components/Spinner';
-import Context from 'View/Context';
+import useStore from '../useStore';
 
 const Loading = React.memo(() => {
-  const { state } = useContext(Context);
+  const { state } = useStore();
+  const { loadingShow } = state;
 
-  if (!state.loadingShow) {
+  if (!loadingShow) {
     return null;
   }
 

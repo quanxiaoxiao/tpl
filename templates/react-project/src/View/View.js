@@ -2,6 +2,7 @@ import React, {
   useState,
   useReducer,
   useLayoutEffect,
+  useMemo,
 } from 'react';
 import { hot } from 'react-hot-loader'; // eslint-disable-line
 import { BrowserRouter } from 'react-router-dom';
@@ -16,7 +17,6 @@ import Loading from './Loading';
 
 import Context from './Context';
 import { reducer, initialState, actions } from './reducer';
-
 
 import Container from './Container';
 
@@ -42,16 +42,22 @@ const View = React.memo(() => {
     };
   });
 
+  const _state = useMemo(() => ({
+    ...state,
+  }), [state]);
+
+  const _dispatch = useMemo(() => Object
+    .keys(actions)
+    .reduce((acc, actionName) => ({
+      ...acc,
+      [actionName]: (payload) => dispatch(actions[actionName](payload)),
+    }), {}), []);
+
   return (
     <Context.Provider
       value={{
-        state,
-        dispatch: Object
-          .keys(actions)
-          .reduce((acc, actionName) => ({
-            ...acc,
-            [actionName]: (payload) => dispatch(actions[actionName](payload)),
-          }), {}),
+        state: _state,
+        dispatch: _dispatch,
       }}
     >
       <FontSizeContext.Provider

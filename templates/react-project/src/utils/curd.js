@@ -57,7 +57,6 @@ export const filter = (list, query) => {
     .filter((item) => !keys.every((key) => item[key] === query[key]));
 };
 
-
 export const find = (list, query) => {
   const index = findIndex(list, query);
   if (index === -1) {

@@ -10,7 +10,6 @@ import useColor from 'hooks/useColor';
 
 import { init as initStyle } from 'styles';
 
-
 const Container = React.memo(() => {
   const getColor = useColor();
 

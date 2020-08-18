@@ -28,10 +28,9 @@ const ContentScroll = React.memo(({
   style,
   ...other
 }) => {
+  const pointerSaved = useRef();
   const [clientHeight, setClientHeight] = useState(height);
   const [scrollTop, setScrollTop] = useState(0);
-  const [scrolling, setScroll] = useState(false);
-  const [isEnter, setEnter] = useState(false);
   const containerRef = useRef();
   const animationStartSaved = useRef();
   const animationEndSaved = useRef();
@@ -81,12 +80,12 @@ const ContentScroll = React.memo(({
         ev.returnValue = false; // eslint-disable-line
       }
     };
-    window.addEventListener('DOMMouseScroll', handler, false);
+    window.addEventListener('DOMMouseScroll', handler, { passive: false });
     document.addEventListener('wheel', handler, { passive: false });
     window.onwheel = handler;
     window.ontouchmove = handler;
     return () => {
-      window.removeEventListener('DOMMouseScroll', handler, false);
+      window.removeEventListener('DOMMouseScroll', handler, { passive: false });
       document.removeEventListener('wheel', handler, { passive: false });
       window.onwheel = null;
       window.ontouchmove = null;
@@ -97,13 +96,12 @@ const ContentScroll = React.memo(({
     if (animateFrameSaved.current) {
       window.cancelAnimationFrame(animateFrameSaved.current);
     }
-    setScroll(false);
     animationStartSaved.current = null;
     animationEndSaved.current = null;
     scrollTopStartSaved.current = null;
     scrollTopTargetSaved.current = null;
     animateFrameSaved.current = null;
-  }, [setScroll]);
+  }, []);
 
   const animate = useCallback((timestamp) => {
     if (scrollTopTargetSaved.current === scrollTopStartSaved.current) {
@@ -156,10 +154,6 @@ const ContentScroll = React.memo(({
         return;
       }
 
-      if (!scrolling) {
-        setScroll(true);
-      }
-
       if (scrollTopTargetSaved.current == null) {
         animateFrameSaved.current = window.requestAnimationFrame(animate);
       }
@@ -170,7 +164,7 @@ const ContentScroll = React.memo(({
       scrollTopStartSaved.current = scrollTop;
       scrollTopTargetSaved.current = target;
     }
-  }, [scrolling, scrollHeight, clientHeight, setScroll, scrollTop, cleanup, animate]);
+  }, [scrollHeight, clientHeight, scrollTop, cleanup, animate]);
 
   const handleWheel = useCallback((ev) => {
     if (clientHeight < scrollHeight) {
@@ -209,13 +203,40 @@ const ContentScroll = React.memo(({
     };
   }, [height, style]);
 
-  const handleMouseEnter = useCallback(() => {
-    setEnter(true);
-  }, []);
+  const handleTouchMoveOnDoc = (ev) => {
+    const y = ev.touches[0].clientY - pointerSaved.current.y;
+    setScrollTop((current) => {
+      pointerSaved.current = {
+        x: ev.touches[0].clientX,
+        y: ev.touches[0].clientY,
+      };
+      const next = current - y;
+      if (next < 0) {
+        return 0;
+      }
+      if (next > scrollHeight - clientHeight) {
+        return scrollHeight - clientHeight;
+      }
+      return next;
+    });
+  };
 
-  const handleMouseLeave = useCallback(() => {
-    setEnter(false);
-  }, []);
+  const handleTouchEndOnDoc = () => {
+    document.removeEventListener('touchmove', handleTouchMoveOnDoc, { passive: false });
+    document.removeEventListener('touchend', handleTouchEndOnDoc);
+  };
+
+  const handleTouchStart = (ev) => {
+    if (scrollHeight > clientHeight) {
+      pointerSaved.current = {
+        x: ev.touches[0].clientX,
+        y: ev.touches[0].clientY,
+        scrollTop,
+      };
+      document.addEventListener('touchend', handleTouchEndOnDoc);
+      document.addEventListener('touchmove', handleTouchMoveOnDoc, { passive: false });
+    }
+  };
 
   return (
     <Context.Provider
@@ -223,10 +244,7 @@ const ContentScroll = React.memo(({
         scrollTop,
         clientHeight,
         scrollHeight,
-        scrolling,
         onScroll: handleScroll,
-        setScroll,
-        isEnter,
       }}
     >
       <div
@@ -239,8 +257,7 @@ const ContentScroll = React.memo(({
         ref={containerRef}
         onWheel={handleWheel}
         onKeyDown={handleKeyDow}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
         tabIndex={0}
         style={containerStyle}
       >

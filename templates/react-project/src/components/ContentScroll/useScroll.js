@@ -10,7 +10,6 @@ const useScroll = () => {
     onScroll,
     setScroll,
     scrolling,
-    isEnter,
   } = (state || {});
 
   const percent = useMemo(() => {
@@ -30,7 +29,6 @@ const useScroll = () => {
       scrollHeight: 0,
       percent: 0,
       scrolling: false,
-      isEnter: false,
     };
   }
 
@@ -40,7 +38,6 @@ const useScroll = () => {
     clientHeight,
     scrollHeight,
     scrolling,
-    isEnter,
     onScroll,
     setScroll,
   };

@@ -3,6 +3,7 @@ import useStore from 'View/useStore';
 
 const useLoading = (pending) => {
   const { state, dispatch } = useStore();
+  const { showLoading, hideLoading } = dispatch;
   const mountSaved = useRef();
   const { loadingShow } = state;
   useEffect(() => {
@@ -15,18 +16,17 @@ const useLoading = (pending) => {
   useEffect(() => {
     if (pending) {
       if (!loadingShow) {
-        dispatch.showLoading();
+        showLoading();
       }
     } else if (loadingShow) {
-      dispatch.hideLoading();
+      hideLoading();
     }
     return () => {
       if (!mountSaved.current && loadingShow) {
-        dispatch.hideLoading();
+        hideLoading();
       }
     };
-  }, [pending, loadingShow, dispatch]);
+  }, [pending, loadingShow, hideLoading, showLoading]);
 };
-
 
 export default useLoading;

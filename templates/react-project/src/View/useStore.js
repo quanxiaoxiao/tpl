@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import Context from './Context';
 
-
 const useStore = () => {
   const {
     state,

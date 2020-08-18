@@ -1,10 +1,9 @@
 /** @jsx jsx */
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { jsx, css } from '@emotion/core';
 import useScroll from '../useScroll';
 
 const ScrollBar = React.memo(() => {
-  const [isActive, setActive] = useState(false);
   const barRef = useRef();
   const startPointerSaved = useRef();
   const {
@@ -13,8 +12,6 @@ const ScrollBar = React.memo(() => {
     percent,
     onScroll,
     scrollTop,
-    setScroll,
-    isEnter,
   } = useScroll();
 
   const scrollBarHeight = useMemo(() => {
@@ -53,20 +50,16 @@ const ScrollBar = React.memo(() => {
     document.removeEventListener('mouseup', handleMouseUpOnDoc);
     startPointerSaved.current = null;
     document.body.style.userSelect = null;
-    setScroll(false);
-    setActive(false);
   };
 
   const handleMouseDown = (ev) => {
     ev.stopPropagation();
     ev.preventDefault();
-    setActive(true);
     if (ev.target !== barRef.current) {
       const y = ev.clientY - ev.target.getBoundingClientRect().y;
       const percentTo = y / clientHeight;
       onScroll((scrollHeight - clientHeight) * percentTo);
     } else {
-      setScroll(true);
       document.body.style.userSelect = 'none';
       startPointerSaved.current = {
         x: ev.clientX,
@@ -93,12 +86,8 @@ const ScrollBar = React.memo(() => {
         border-radius: 3px;
         box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         z-index: 1;
-        transition: opacity 0.3s;
       `}
       aria-label="scrollbar"
-      style={{
-        opacity: (isActive || isEnter) ? 1 : 0,
-      }}
       onMouseDown={handleMouseDown}
     >
       <div

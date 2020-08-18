@@ -7,5 +7,4 @@ const useFontSize = () => {
   return fontSize;
 };
 
-
 export default useFontSize;

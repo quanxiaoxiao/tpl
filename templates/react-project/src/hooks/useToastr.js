@@ -24,5 +24,4 @@ const useToastr = () => {
   };
 };
 
-
 export default useToastr;

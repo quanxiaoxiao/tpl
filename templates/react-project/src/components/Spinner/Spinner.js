@@ -1,19 +1,17 @@
 /** @jsx jsx */
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { jsx, css } from '@emotion/core';
 import _ from 'lodash';
-import useColor from 'hooks/useColor';
 
 const Spinner = React.memo(({
   type = 0,
 }) => {
-  const getColor = useColor();
   const map = {
-    0: getColor('a04'),
-    1: getColor('a01'),
+    0: '#ccc',
+    1: '#fff',
   };
-  const bars = useMemo(() => _
+  const bars = _
     .times(12)
     .map((idx) => (
       <i
@@ -33,7 +31,8 @@ const Spinner = React.memo(({
           `}
         key={idx}
       />
-    )), []);
+    ));
+
   return (
     <span
       css={css`

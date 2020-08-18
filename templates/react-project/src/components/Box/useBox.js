@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import Context from './Context';
 
-
 const useBox = () => {
   const {
     containerWidth,
@@ -13,6 +12,5 @@ const useBox = () => {
     containerHeight,
   };
 };
-
 
 export default useBox;

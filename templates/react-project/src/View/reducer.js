@@ -21,13 +21,12 @@ const { actions, reducer } = createReducer({
   }),
   addToastr: (state, payload) => ({
     ...state,
-    toastrList: [...state.toastrList, { ...payload, id: _.uniqueId('toastr_') }],
+    toastrList: [...state.toastrList, { ...payload, _id: _.uniqueId('toastr_') }],
   }),
   removeToastr: (state, payload) => ({
     ...state,
-    toastrList: state.toastrList.filter((item) => item.id !== payload),
+    toastrList: state.toastrList.filter((item) => item._id !== payload),
   }),
 });
-
 
 export { actions, reducer };

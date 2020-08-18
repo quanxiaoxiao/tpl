@@ -1,12 +1,12 @@
 /** @jsx jsx */
-import React, { Fragment, useContext } from 'react';
+import React, { Fragment } from 'react';
 import { jsx, css } from '@emotion/core';
 import ReactDOM from 'react-dom';
-import Context from 'View/Context';
 import Item from './Item';
+import useStore from '../useStore';
 
 const Toastr = React.memo(() => {
-  const { state } = useContext(Context);
+  const { state, dispatch } = useStore();
   const { toastrList } = state;
 
   return ReactDOM.createPortal((
@@ -15,8 +15,7 @@ const Toastr = React.memo(() => {
         css={css`
           position: fixed;
           top: 1rem;
-          left: 50%;
-          transform: translateX(-50%);
+          right: 1rem;
           z-index: 101;
           > div:not(:last-child) {
             margin-bottom: 0.8rem;
@@ -28,11 +27,9 @@ const Toastr = React.memo(() => {
             .filter((item) => !item.position)
             .map((item) => (
               <Item
-                key={item.id}
-                id={item.id}
-                type={item.type}
-                duration={item.duration}
-                message={item.message}
+                key={item._id}
+                item={item}
+                onRemove={dispatch.removeToastr}
               />
             ))
         }
@@ -42,12 +39,9 @@ const Toastr = React.memo(() => {
           .filter((item) => item.position)
           .map((item) => (
             <Item
-              position={item.position}
-              duration={item.duration}
-              key={item.id}
-              id={item.id}
-              type={item.type}
-              message={item.message}
+              key={item._id}
+              item={item}
+              onRemove={dispatch.removeToastr}
             />
           ))
       }
