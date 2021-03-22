@@ -19,6 +19,7 @@ module.exports = (pathname, type) => {
     taro: [path.resolve(__dirname, '..', 'templates', 'react-taro-component')],
     react: [path.resolve(__dirname, '..', 'templates', 'react-component')],
     reducer: [path.resolve(__dirname, '..', 'templates', 'react-reducer-component')],
+    memo: [path.resolve(__dirname, '..', 'templates', 'react-memo-component')],
   };
   const pathList = [
     ...typeMap[type],

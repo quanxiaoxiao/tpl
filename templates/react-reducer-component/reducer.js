@@ -1,12 +1,9 @@
+import createReducer from 'utils/createReducer';
+
 export const initialState = {
 };
 
-export const actions = {
-};
+const { actions, reducer } = createReducer({
+});
 
-export const reducer = (state, { type, payload }) => {
-  switch (type) {
-    default:
-      throw new Error();
-  }
-};
+export { actions, reducer };

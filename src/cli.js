@@ -52,7 +52,7 @@ yargs // eslint-disable-line
         alias: 't',
         type: 'string',
         describe: 'set component type',
-        choices: ['taro', 'react', 'reducer'],
+        choices: ['taro', 'react', 'reducer', 'memo'],
         default: 'react',
       },
     },

@@ -1,9 +1,9 @@
-import React, { useReducer } from 'react';
 import Context from './Context';
-import { reducer, initialState } from './reducer';
+import useState from './useState';
 
-const {{name}} = React.memo(() => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+const {{name}} = () => {
+  const { state, dispatch } = useState();
+
   const store = {
     state,
     dispatch,
@@ -17,6 +17,6 @@ const {{name}} = React.memo(() => {
       </div>
     </Context.Provider>
   );
-});
+};
 
 export default {{name}};
