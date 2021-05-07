@@ -4,7 +4,6 @@ const fp = require('lodash/fp');
 const chalk = require('chalk');
 const shelljs = require('shelljs');
 const handlebars = require('handlebars');
-const detectCharacterEncoding = require('detect-character-encoding');
 const getFileList = require('./getFileList');
 
 module.exports = (pathList, name, destRoot, base) => {
@@ -45,32 +44,15 @@ module.exports = (pathList, name, destRoot, base) => {
       const source = path.join(item.sourceRoot, item.path);
       const fileBuffer = fs.readFileSync(source);
 
-      const charsetMatch = detectCharacterEncoding(fileBuffer);
       const filename = item.name.replace(/^_(?=\.)/, name);
       const dest = path.join(destDir, filename);
-      const isTextPlain = [
-        'ISO-8859-1',
-        'ISO-8859-2',
-        'ISO-8859-3',
-        'ISO-8859-4',
-        'ISO-8859-5',
-        'ISO-8859-6',
-        'ISO-8859-7',
-        'ISO-8859-8',
-        'ISO-8859-9',
-        'UTF-8',
-      ].includes(charsetMatch.encoding);
-      if (isTextPlain) {
-        try {
-          const content = handlebars.compile(fileBuffer.toString('utf-8'))({
-            name,
-          });
-          fs.writeFileSync(dest, content, 'utf-8');
-        } catch (error) {
-          console.error(dest, error);
-          fs.writeFileSync(dest, fileBuffer);
-        }
-      } else {
+      try {
+        const content = handlebars.compile(fileBuffer.toString('utf-8'))({
+          name,
+        });
+        fs.writeFileSync(dest, content, 'utf-8');
+      } catch (error) {
+        console.error(dest, error);
         fs.writeFileSync(dest, fileBuffer);
       }
       console.log(`add ${chalk.green(base ? path.join(base, filename) : path.join(item.dir, filename))}`);
