@@ -7,6 +7,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import config from './config.mjs';
 import create from './create.mjs';
+import update from './update.mjs';
 
 const pkg = JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
@@ -31,6 +32,13 @@ yargs(hideBin(process.argv))
         resolve(process.cwd(), argv.name),
         JSON.parse(fs.readFileSync(resolve(os.homedir(), config.configName))),
       );
+    },
+  )
+  .command(
+    'update',
+    'update resource',
+    () => {
+      update();
     },
   )
   .demandCommand(1)
