@@ -45,40 +45,76 @@ export default () => {
       })),
       filter((obj) => obj.diff.length > 1),
       tap((obj) => {
-        obj.diff.forEach((d, i) => {
-          if (d.removed || d.added) {
-            console.log(`${chalk.magenta(`@ ${obj.name}:${obj.diff.slice(0, i).filter((dd) => !dd.removed && !dd.added).reduce((acc, cur) => acc + cur.count, 0)} @`)}`);
-            if (i !== 0) {
-              const prev = obj.diff[i - 1];
-              if (!prev.removed && !prev.added) {
-                const matchs = prev.value.replace(/\n+$/, '').match(/\n(.+)$/);
-                if (matchs) {
-                  console.log(matchs[1]);
+        writeFileSync(resolve(process.cwd(), obj.name), obj.origin);
+      }),
+      map((obj) => {
+        const modifies = {
+        };
+        for (let i = 0; i < obj.diff.length; i++) {
+          const item = obj.diff[i];
+          if (item.removed || item.added) {
+            const lineNumer = obj
+              .diff
+              .slice(0, i).filter((dd) => !dd.removed && !dd.added)
+              .reduce((acc, cur) => acc + cur.count, 0);
+            if (!modifies[lineNumer]) {
+              modifies[lineNumer] = {
+                pre: null,
+                next: null,
+                list: [],
+              };
+              const prevs = obj.diff.slice(0, i).filter((d) => !d.removed && !d.added);
+              if (prevs.length > 0) {
+                const prev = prevs[prevs.length - 1];
+                const lines = prev.value.replace(/^\n|\n$/g, '').split('\n');
+                if (lines.length > 0) {
+                  modifies[lineNumer].pre = lines[lines.length - 1];
+                }
+              }
+              const next = obj.diff.slice(i + 1).find((d) => !d.removed && !d.added);
+              if (next) {
+                const lines = next.value.replace(/^\n|\n$/g, '').split('\n');
+                if (lines.length > 0) {
+                  modifies[lineNumer].next = lines[0]; // eslint-disable-line prefer-destructuring
                 }
               }
             }
-            if (d.removed) {
-              console.log(`${chalk.red(d.value.replace(/^\n|\n$/, ''))}`);
-            }
-            if (d.added) {
-              console.log(`${chalk.green(d.value.replace(/^\n|\n$/, ''))}`);
-            }
-            const next = obj.diff[i + 1];
-            if (next && !next.removed && !next.added) {
-              const matchs = next.value.replace(/^\n+/, '').match(/^[^\n]+/);
-              if (matchs) {
-                console.log(matchs[0]);
-              }
-            }
-            console.log('');
+            modifies[lineNumer].list.push({
+              removed: item.removed,
+              added: item.added,
+              value: item.value,
+            });
           }
-        });
-      }),
-      tap((obj) => {
-        writeFileSync(resolve(process.cwd(), obj.name), obj.origin);
+        }
+        return {
+          name: obj.name,
+          modifies,
+        };
       }),
     )
-    .subscribe(() => {
-      process.exit(0);
+    .subscribe((ret) => {
+      Object
+        .keys(ret.modifies)
+        .forEach((lineNumer) => {
+          const item = ret.modifies[lineNumer];
+          console.log(`${chalk.magenta(`@ ${ret.name}:${lineNumer} @`)}`);
+          if (item.pre != null) {
+            console.log(item.pre);
+          }
+
+          item.list.forEach((d) => {
+            if (d.removed) {
+              console.log(`${chalk.red(d.value.replace(/^\n|\n$/g, ''))}`);
+            }
+            if (d.added) {
+              console.log(`${chalk.green(d.value.replace(/^\n|\n$/g, ''))}`);
+            }
+          });
+
+          if (item.next != null) {
+            console.log(item.next);
+          }
+        });
+      console.log('');
     });
 };
