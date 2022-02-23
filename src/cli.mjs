@@ -7,7 +7,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import config from './config.mjs';
 import create from './create.mjs';
-import update from './update.mjs';
+import pull from './pull.mjs';
+import diff from './diff.mjs';
+import push from './push.mjs';
 
 const pkg = JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
@@ -35,10 +37,24 @@ yargs(hideBin(process.argv))
     },
   )
   .command(
-    'update',
-    'update resource',
+    'pull',
+    'pull resource',
     () => {
-      update();
+      pull();
+    },
+  )
+  .command(
+    'diff',
+    'compare resource at store',
+    () => {
+      diff();
+    },
+  )
+  .command(
+    'push',
+    'upload resource to store',
+    () => {
+      push();
     },
   )
   .demandCommand(1)
