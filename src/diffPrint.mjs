@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 
 export default (obj) => {
-  const modifies = {
-  };
+  const modifies = {};
+
   for (let i = 0; i < obj.diff.length; i++) {
     const item = obj.diff[i];
     if (item.removed || item.added) {

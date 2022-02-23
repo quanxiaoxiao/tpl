@@ -10,6 +10,7 @@ import create from './create.mjs';
 import pull from './pull.mjs';
 import diff from './diff.mjs';
 import push from './push.mjs';
+import upload from './upload.mjs';
 
 const pkg = JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
@@ -41,6 +42,13 @@ yargs(hideBin(process.argv))
     'pull resource',
     () => {
       pull();
+    },
+  )
+  .command(
+    'upload',
+    'upload local resource',
+    () => {
+      upload();
     },
   )
   .command(

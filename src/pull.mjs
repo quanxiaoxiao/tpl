@@ -7,7 +7,9 @@ export default async () => {
   const modifedList = await fetchModifedResources();
   for (let i = 0; i < modifedList.length; i++) {
     const obj = modifedList[i];
-    writeFileSync(resolve(process.cwd(), obj.name), obj.origin);
+    if (obj.origin) {
+      writeFileSync(resolve(process.cwd(), obj.name), obj.origin);
+    }
     print(obj);
   }
 };
