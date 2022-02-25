@@ -6,7 +6,7 @@ import print from './diffPrint.mjs';
 import config from './config.mjs';
 
 export default async () => {
-  const modifedList = await fetchModifedResources((raw, origin) => [origin, raw]);
+  const modifedList = await fetchModifedResources((raw, origin) => [origin, raw], false);
   for (let i = 0; i < modifedList.length; i++) {
     const obj = modifedList[i];
     print(obj);

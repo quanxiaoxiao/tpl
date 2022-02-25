@@ -6,7 +6,7 @@ import { fetchData } from '@quanxiaoxiao/about-http';
 import shelljs from 'shelljs';
 import getLocalConfig from './getLocalConfig.mjs';
 
-export default async (diffCompare = (raw, origin) => [raw, origin]) => {
+export default async (diffCompare = (raw, origin) => [raw, origin], isPull = true) => {
   const { resources, url } = getLocalConfig();
   const result = [];
   await Object
@@ -18,15 +18,16 @@ export default async (diffCompare = (raw, origin) => [raw, origin]) => {
     .reduce(async (acc, cur) => {
       await acc;
       const localResourcePathname = resolve(process.cwd(), cur.name);
-      if (!shelljs.test('-f', localResourcePathname)) {
-        console.log(`\`${chalk.red(localResourcePathname)}\` not found`);
-        return;
-      }
-      const raw = readFileSync(resolve(process.cwd(), cur.name));
       if (cur.resource == null) {
         console.log(`\`${chalk.red(localResourcePathname)}\` resource unset`);
         return;
       }
+      const isLocalResourceExisted = shelljs.test('-f', localResourcePathname);
+      if (!isPull) {
+        console.log(`\`${chalk.red(localResourcePathname)}\` not found`);
+        return;
+      }
+      const raw = isLocalResourceExisted ? readFileSync(localResourcePathname) : Buffer.from([]);
       try {
         const origin = await fetchData({
           url: `${url.replace(/{{[^}]+}}/, cur.resource)}`,
@@ -43,7 +44,7 @@ export default async (diffCompare = (raw, origin) => [raw, origin]) => {
           },
         });
         const diff = Diff.diffLines(...diffCompare(raw.toString(), origin.toString()));
-        if (diff.length > 1) {
+        if (diff.length > 1 || diff[0].added || diff[0].removed) {
           result.push({
             resource: cur.resource,
             name: cur.name,
