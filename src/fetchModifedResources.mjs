@@ -1,29 +1,24 @@
-import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import * as Diff from 'diff';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import shelljs from 'shelljs';
+import parseConfig from './lib/parseConfig.mjs';
 import getLocalConfig from './getLocalConfig.mjs';
 
 export default async (diffCompare = (raw, origin) => [raw, origin], isPull = true) => {
   const { resources, url } = getLocalConfig();
   const result = [];
-  await Object
-    .entries(resources)
-    .map(([filename, resource]) => ({
-      name: filename,
-      resource,
-    }))
+  await parseConfig(resources)
     .reduce(async (acc, cur) => {
       await acc;
-      const localResourcePathname = resolve(process.cwd(), cur.name);
+      const localResourcePathname = cur.path;
       if (cur.resource == null) {
         console.log(`\`${chalk.red(localResourcePathname)}\` resource unset`);
         return;
       }
       const isLocalResourceExisted = shelljs.test('-f', localResourcePathname);
-      if (!isPull) {
+      if (!isPull && !isLocalResourceExisted) {
         console.log(`\`${chalk.red(localResourcePathname)}\` not found`);
         return;
       }
@@ -46,6 +41,7 @@ export default async (diffCompare = (raw, origin) => [raw, origin], isPull = tru
         const diff = Diff.diffLines(...diffCompare(raw.toString(), origin.toString()));
         if (diff.length > 1 || diff[0].added || diff[0].removed) {
           result.push({
+            path: cur.path,
             resource: cur.resource,
             name: cur.name,
             raw,
