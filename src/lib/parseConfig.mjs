@@ -16,6 +16,7 @@ const walk = (obj, arr, base) => {
       result.push({
         name,
         navList: arr,
+        dirname: resolve(base, ...arr),
         path: resolve(base, ...arr, name),
         resource: obj[name],
       });

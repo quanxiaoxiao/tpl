@@ -12,6 +12,7 @@ import pull from './actions/pull.mjs';
 import diff from './actions/diff.mjs';
 import push from './actions/push.mjs';
 import upload from './actions/upload.mjs';
+import createReactComponent from './actions/createReactComponent.mjs';
 import getLocalConfig from './lib/getLocalConfig.mjs';
 import getGlobalConfig from './lib/getGlobalConfig.mjs';
 import merge from './lib/mergeObj.mjs';
@@ -34,6 +35,31 @@ const options = (_) => {
 };
 
 yargs(hideBin(process.argv))
+  .command(
+    'comp [path]',
+    'create react component',
+    (_) => {
+      _.options({
+        path: {
+          demandOption: true,
+          type: 'string',
+        },
+        type: {
+          type: 'string',
+          choices: ['component', 'reducer', 'memo'],
+          default: 'component',
+        },
+      });
+    },
+    (argv) => {
+      const config = getGlobalConfig();
+      const data = config.resources._['.template'].react;
+      createReactComponent(resolve(process.cwd(), argv.path), {
+        ...config,
+        resources: data[argv.type],
+      });
+    },
+  )
   .command(
     'node [name]',
     'create node project',
