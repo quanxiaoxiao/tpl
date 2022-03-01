@@ -1,5 +1,5 @@
-import fs from 'node:fs';
 import os from 'node:os';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
@@ -12,9 +12,9 @@ import pull from './pull.mjs';
 import diff from './diff.mjs';
 import push from './push.mjs';
 import upload from './upload.mjs';
-import getLocalConfig from './getLocalConfig.mjs';
+import getLocalConfig from './lib/getLocalConfig.mjs';
 
-const pkg = JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
+const pkg = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
 if (!shelljs.test('-f', resolve(os.homedir(), CONFIG_NAME))) {
   console.log(`global config \`${chalk.red(CONFIG_NAME)}\` not found`);
@@ -33,7 +33,7 @@ yargs(hideBin(process.argv))
       });
     },
     (argv) => {
-      const data = JSON.parse(fs.readFileSync(resolve(os.homedir(), CONFIG_NAME)));
+      const data = JSON.parse(readFileSync(resolve(os.homedir(), CONFIG_NAME)));
       if (!data.resources.node) {
         console.log(`no match config \`${chalk.red('node')}\``);
         process.exit(1);
@@ -60,7 +60,12 @@ yargs(hideBin(process.argv))
     'upload local resource',
     () => {
       const locationConfig = getLocalConfig();
-      upload(locationConfig);
+      upload(locationConfig, (resourcesNew) => {
+        writeFileSync(locationConfig.path, JSON.stringify({
+          ...JSON.parse(readFileSync(locationConfig.path)),
+          resources: resourcesNew,
+        }, null, 2));
+      });
     },
   )
   .command(

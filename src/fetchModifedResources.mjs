@@ -6,9 +6,9 @@ import shelljs from 'shelljs';
 import parseConfig from './lib/parseConfig.mjs';
 
 export default async (config, diffCompare = (raw, origin) => [raw, origin], isPull = true) => {
-  const { resources, url } = config;
+  const { resources, url, base } = config;
   const result = [];
-  await parseConfig(resources)
+  await parseConfig(resources, base)
     .reduce(async (acc, cur) => {
       await acc;
       const localResourcePathname = cur.path;

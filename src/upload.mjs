@@ -1,5 +1,5 @@
 /* eslint no-param-reassign: 0 */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { parse } from 'node:url';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
@@ -20,12 +20,12 @@ const merge = (orgin, values) => {
   }
 };
 
-export default async (config) => {
+export default async (config, cb) => {
   const {
     resources,
     url,
     entry,
-    path,
+    base,
   } = config;
 
   const { host, protocol } = parse(url);
@@ -42,7 +42,7 @@ export default async (config) => {
     };
   };
 
-  await parseConfig(resources)
+  await parseConfig(resources, base)
     .filter((d) => !d.resource)
     .map((d) => ({
       ...d,
@@ -66,8 +66,5 @@ export default async (config) => {
       merge(resources, walk(cur.name, _id, cur.navList));
     }, Promise.resolve);
 
-  writeFileSync(path, JSON.stringify({
-    ...JSON.parse(readFileSync(path)),
-    resources,
-  }, null, 2));
+  cb(resources);
 };

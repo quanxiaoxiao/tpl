@@ -2,10 +2,11 @@ import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import _ from 'lodash';
 import shelljs from 'shelljs';
-import { CONFIG_NAME } from './constants.mjs';
+import { CONFIG_NAME } from '../constants.mjs';
 
 export default () => {
-  const target = resolve(process.cwd(), CONFIG_NAME);
+  const base = process.cwd();
+  const target = resolve(base, CONFIG_NAME);
   if (!shelljs.test('-f', target)) {
     console.error(`config \`${target}\` is not found`);
     process.exit(1);
@@ -23,6 +24,7 @@ export default () => {
 
   return {
     path: target,
+    base,
     entry,
     resources,
     url,
