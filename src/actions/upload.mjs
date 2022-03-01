@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import { parse } from 'node:url';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
-import parseConfig from './lib/parseConfig.mjs';
-import merge from './lib/mergeObj.mjs';
+import parseConfig from '../lib/parseConfig.mjs';
+import merge from '../lib/mergeObj.mjs';
 
 export default async (config, cb) => {
   const {

@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
-import fetchModifedResources from './fetchModifedResources.mjs';
-import print from './diffPrint.mjs';
+import fetchModifedResources from '../fetchModifedResources.mjs';
+import print from '../diffPrint.mjs';
 
 export default async (config) => {
   const modifedList = await fetchModifedResources(config);

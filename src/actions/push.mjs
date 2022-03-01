@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fetchData } from '@quanxiaoxiao/about-http';
-import fetchModifedResources from './fetchModifedResources.mjs';
-import print from './diffPrint.mjs';
-import { CONFIG_NAME } from './constants.mjs';
+import fetchModifedResources from '../fetchModifedResources.mjs';
+import print from '../diffPrint.mjs';
+import { CONFIG_NAME } from '../constants.mjs';
 
 export default async (config) => {
   const modifedList = await fetchModifedResources(config, (raw, origin) => [origin, raw], false);

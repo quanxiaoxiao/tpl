@@ -15,8 +15,8 @@ import {
   tap,
   reduce,
 } from 'rxjs/operators';
-import extractEslintDependecies from './lib/extractEslintDependecies.mjs';
-import extractBabelDependecies from './lib/extractBabelDependecies.mjs';
+import extractEslintDependecies from '../lib/extractEslintDependecies.mjs';
+import extractBabelDependecies from '../lib/extractBabelDependecies.mjs';
 
 export default (target, config) => {
   if (shelljs.test('-d', target)) {
