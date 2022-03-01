@@ -4,21 +4,7 @@ import { parse } from 'node:url';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import parseConfig from './lib/parseConfig.mjs';
-
-const merge = (orgin, values) => {
-  const keys = Object.keys(values);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = values[key];
-    const type = typeof value;
-    if (orgin[key] == null) {
-      orgin[key] = type === 'object' ? {} : value;
-    }
-    if (type === 'object') {
-      merge(orgin[key], value);
-    }
-  }
-};
+import merge from './lib/mergeObj.mjs';
 
 export default async (config, cb) => {
   const {

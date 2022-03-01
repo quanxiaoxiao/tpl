@@ -13,6 +13,8 @@ import diff from './diff.mjs';
 import push from './push.mjs';
 import upload from './upload.mjs';
 import getLocalConfig from './lib/getLocalConfig.mjs';
+import getGlobalConfig from './lib/getGlobalConfig.mjs';
+import merge from './lib/mergeObj.mjs';
 
 const pkg = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
@@ -20,6 +22,16 @@ if (!shelljs.test('-f', resolve(os.homedir(), CONFIG_NAME))) {
   console.log(`global config \`${chalk.red(CONFIG_NAME)}\` not found`);
   process.exit(1);
 }
+
+const options = (_) => {
+  _.options({
+    g: {
+      alias: 'global',
+      describe: 'config use global',
+      type: 'boolean',
+    },
+  });
+};
 
 yargs(hideBin(process.argv))
   .command(
@@ -50,38 +62,77 @@ yargs(hideBin(process.argv))
   .command(
     'pull',
     'pull resource',
-    () => {
-      const locationConfig = getLocalConfig();
-      pull(locationConfig);
+    options,
+    (argv) => {
+      const config = argv.global ? getGlobalConfig() : getLocalConfig();
+      const resources = argv.global ? config.resources._ : config.resources;
+      if (!resources) {
+        console.log('config resources is empty');
+        process.exit(1);
+      }
+      pull({
+        ...config,
+        resources,
+      });
     },
   )
   .command(
     'upload',
-    'upload local resource',
-    () => {
-      const locationConfig = getLocalConfig();
-      upload(locationConfig, (resourcesNew) => {
-        writeFileSync(locationConfig.path, JSON.stringify({
-          ...JSON.parse(readFileSync(locationConfig.path)),
-          resources: resourcesNew,
-        }, null, 2));
+    'upload resource',
+    options,
+    (argv) => {
+      const config = argv.global ? getGlobalConfig() : getLocalConfig();
+      const resources = argv.global ? config.resources._ : config.resources;
+      if (!resources) {
+        console.log('config resources is empty');
+        process.exit(1);
+      }
+      upload({
+        ...config,
+        resources,
+      }, (resourcesNew) => {
+        const raw = JSON.parse(readFileSync(config.path));
+        merge(raw, {
+          resources: argv.global ? {
+            _: resourcesNew,
+          } : resourcesNew,
+        });
+        writeFileSync(config.path, JSON.stringify(raw, null, 2));
       });
     },
   )
   .command(
     'diff',
     'compare resource at store',
-    () => {
-      const locationConfig = getLocalConfig();
-      diff(locationConfig);
+    options,
+    (argv) => {
+      const config = argv.global ? getGlobalConfig() : getLocalConfig();
+      const resources = argv.global ? config.resources._ : config.resources;
+      if (!resources) {
+        console.log('config resources is empty');
+        process.exit(1);
+      }
+      diff({
+        ...config,
+        resources,
+      });
     },
   )
   .command(
     'push',
     'upload resource to store',
-    () => {
-      const locationConfig = getLocalConfig();
-      push(locationConfig);
+    options,
+    (argv) => {
+      const config = argv.global ? getGlobalConfig() : getLocalConfig();
+      const resources = argv.global ? config.resources._ : config.resources;
+      if (!resources) {
+        console.log('config resources is empty');
+        process.exit(1);
+      }
+      push({
+        ...config,
+        resources,
+      });
     },
   )
   .demandCommand(1)

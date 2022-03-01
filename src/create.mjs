@@ -17,6 +17,7 @@ import {
 } from 'rxjs/operators';
 import extractEslintDependecies from './lib/extractEslintDependecies.mjs';
 import extractBabelDependecies from './lib/extractBabelDependecies.mjs';
+import getGlocalConfig from './lib/getGlobalConfig.mjs';
 
 export default (target, config) => {
   if (shelljs.test('-d', target)) {
