@@ -2,10 +2,10 @@ import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import _ from 'lodash';
 import shelljs from 'shelljs';
-import config from './config.mjs';
+import { CONFIG_NAME } from './constants.mjs';
 
 export default () => {
-  const target = resolve(process.cwd(), config.configName);
+  const target = resolve(process.cwd(), CONFIG_NAME);
   if (!shelljs.test('-f', target)) {
     console.error(`config \`${target}\` is not found`);
     process.exit(1);

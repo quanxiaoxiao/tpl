@@ -2,20 +2,22 @@ import fs from 'node:fs';
 import os from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import chalk from 'chalk';
 import shelljs from 'shelljs';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import config from './config.mjs';
+import { CONFIG_NAME } from './constants.mjs';
 import create from './create.mjs';
 import pull from './pull.mjs';
 import diff from './diff.mjs';
 import push from './push.mjs';
 import upload from './upload.mjs';
+import getLocalConfig from './getLocalConfig.mjs';
 
 const pkg = JSON.parse(fs.readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
-if (!shelljs.test('-f', resolve(os.homedir(), config.configName))) {
-  console.log(`\`${config.configName}\` is not found`);
+if (!shelljs.test('-f', resolve(os.homedir(), CONFIG_NAME))) {
+  console.log(`global config \`${chalk.red(CONFIG_NAME)}\` not found`);
   process.exit(1);
 }
 
@@ -31,9 +33,17 @@ yargs(hideBin(process.argv))
       });
     },
     (argv) => {
+      const data = JSON.parse(fs.readFileSync(resolve(os.homedir(), CONFIG_NAME)));
+      if (!data.resources.node) {
+        console.log(`no match config \`${chalk.red('node')}\``);
+        process.exit(1);
+      }
       create(
         resolve(process.cwd(), argv.name),
-        JSON.parse(fs.readFileSync(resolve(os.homedir(), config.configName))),
+        {
+          ...data,
+          resources: data.resources.node,
+        },
       );
     },
   )
@@ -41,28 +51,32 @@ yargs(hideBin(process.argv))
     'pull',
     'pull resource',
     () => {
-      pull();
+      const locationConfig = getLocalConfig();
+      pull(locationConfig);
     },
   )
   .command(
     'upload',
     'upload local resource',
     () => {
-      upload();
+      const locationConfig = getLocalConfig();
+      upload(locationConfig);
     },
   )
   .command(
     'diff',
     'compare resource at store',
     () => {
-      diff();
+      const locationConfig = getLocalConfig();
+      diff(locationConfig);
     },
   )
   .command(
     'push',
     'upload resource to store',
     () => {
-      push();
+      const locationConfig = getLocalConfig();
+      push(locationConfig);
     },
   )
   .demandCommand(1)

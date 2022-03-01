@@ -4,7 +4,6 @@ import { parse } from 'node:url';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import parseConfig from './lib/parseConfig.mjs';
-import getLocalConfig from './getLocalConfig.mjs';
 
 const merge = (orgin, values) => {
   const keys = Object.keys(values);
@@ -21,13 +20,13 @@ const merge = (orgin, values) => {
   }
 };
 
-export default async () => {
+export default async (config) => {
   const {
     resources,
     url,
     entry,
     path,
-  } = getLocalConfig();
+  } = config;
 
   const { host, protocol } = parse(url);
 

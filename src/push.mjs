@@ -3,15 +3,15 @@ import { readFileSync } from 'node:fs';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import fetchModifedResources from './fetchModifedResources.mjs';
 import print from './diffPrint.mjs';
-import config from './config.mjs';
+import { CONFIG_NAME } from './constants.mjs';
 
-export default async () => {
-  const modifedList = await fetchModifedResources((raw, origin) => [origin, raw], false);
+export default async (config) => {
+  const modifedList = await fetchModifedResources(config, (raw, origin) => [origin, raw], false);
   for (let i = 0; i < modifedList.length; i++) {
     const obj = modifedList[i];
     print(obj);
   }
-  const target = resolve(process.cwd(), config.configName);
+  const target = resolve(process.cwd(), CONFIG_NAME);
   const { url } = JSON.parse(readFileSync(target));
   await modifedList.reduce(async (acc, cur) => {
     await acc;

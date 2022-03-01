@@ -4,10 +4,9 @@ import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import shelljs from 'shelljs';
 import parseConfig from './lib/parseConfig.mjs';
-import getLocalConfig from './getLocalConfig.mjs';
 
-export default async (diffCompare = (raw, origin) => [raw, origin], isPull = true) => {
-  const { resources, url } = getLocalConfig();
+export default async (config, diffCompare = (raw, origin) => [raw, origin], isPull = true) => {
+  const { resources, url } = config;
   const result = [];
   await parseConfig(resources)
     .reduce(async (acc, cur) => {
