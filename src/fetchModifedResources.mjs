@@ -38,12 +38,13 @@ export default async (config, diffCompare = (raw, origin) => [raw, origin], isPu
           },
         });
         const diff = Diff.diffLines(...diffCompare(raw.toString(), origin.toString()));
-        if (diff.length > 1 || diff[0].added || diff[0].removed) {
+        if (!isLocalResourceExisted || diff.length > 1 || diff[0].added || diff[0].removed) {
           result.push({
+            dirname: cur.dirname,
             path: cur.path,
             resource: cur.resource,
             name: cur.name,
-            raw,
+            raw: isLocalResourceExisted ? raw : null,
             origin,
             diff,
           });

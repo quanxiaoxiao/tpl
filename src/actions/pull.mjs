@@ -8,8 +8,8 @@ export default async (config) => {
   for (let i = 0; i < modifedList.length; i++) {
     const obj = modifedList[i];
     if (obj.origin) {
-      if (!shelljs.test('-d', obj.path)) {
-        shelljs.mkdir('-p', obj.path);
+      if (!shelljs.test('-d', obj.dirname)) {
+        shelljs.mkdir('-p', obj.dirname);
       }
       if (!obj.raw || !obj.raw.equals(obj.origin)) {
         writeFileSync(obj.path, obj.origin);
