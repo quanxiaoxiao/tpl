@@ -12,7 +12,7 @@ export default () => {
     console.error(`config \`${target}\` is not found`);
     process.exit(1);
   }
-  const { resources, url, entry } = JSON.parse(readFileSync(target));
+  const { _: resources, url, entry } = JSON.parse(readFileSync(target));
   if (!url) {
     console.error('config url unset');
     process.exit(1);

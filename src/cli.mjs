@@ -53,7 +53,7 @@ yargs(hideBin(process.argv))
     },
     (argv) => {
       const config = getGlobalConfig();
-      const data = config.resources._['.template'].react;
+      const data = config.resources['.template'].react;
       createReactComponent(resolve(process.cwd(), argv.path), {
         ...config,
         resources: data[argv.type],
@@ -91,7 +91,7 @@ yargs(hideBin(process.argv))
     options,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const resources = argv.global ? config.resources._ : config.resources;
+      const { resources } = config;
       if (!resources) {
         console.log('config resources is empty');
         process.exit(1);
@@ -108,7 +108,7 @@ yargs(hideBin(process.argv))
     options,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const resources = argv.global ? config.resources._ : config.resources;
+      const { resources } = config;
       if (!resources) {
         console.log('config resources is empty');
         process.exit(1);
@@ -119,9 +119,7 @@ yargs(hideBin(process.argv))
       }, (resourcesNew) => {
         const raw = JSON.parse(readFileSync(config.path));
         merge(raw, {
-          resources: argv.global ? {
-            _: resourcesNew,
-          } : resourcesNew,
+          _: resourcesNew,
         });
         writeFileSync(config.path, JSON.stringify(raw, null, 2));
       });
@@ -133,7 +131,7 @@ yargs(hideBin(process.argv))
     options,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const resources = argv.global ? config.resources._ : config.resources;
+      const { resources } = config;
       if (!resources) {
         console.log('config resources is empty');
         process.exit(1);
@@ -150,7 +148,7 @@ yargs(hideBin(process.argv))
     options,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const resources = argv.global ? config.resources._ : config.resources;
+      const { resources } = config;
       if (!resources) {
         console.log('config resources is empty');
         process.exit(1);
