@@ -7,7 +7,7 @@ import shelljs from 'shelljs';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { CONFIG_NAME } from './constants.mjs';
-import create from './actions/create.mjs';
+import createNodeProject from './actions/createNodeProject.mjs';
 import pull from './actions/pull.mjs';
 import diff from './actions/diff.mjs';
 import push from './actions/push.mjs';
@@ -64,24 +64,38 @@ yargs(hideBin(process.argv))
     'node [name]',
     'create node project',
     (_) => {
-      _.option('name', {
-        demandOption: true,
-        type: 'string',
-        describe: 'project name',
+      _.options({
+        name: {
+          demandOption: true,
+          type: 'string',
+          describe: 'project name',
+        },
+        graphql: {
+          type: 'boolean',
+        },
       });
     },
     (argv) => {
-      const data = JSON.parse(readFileSync(resolve(os.homedir(), CONFIG_NAME)));
-      if (!data.resources.node) {
-        console.log(`no match config \`${chalk.red('node')}\``);
-        process.exit(1);
-      }
-      create(
+      const config = getGlobalConfig();
+      createNodeProject(
         resolve(process.cwd(), argv.name),
         {
-          ...data,
-          resources: data.resources.node,
+          ...config,
+          resources: argv.graphql ? config.resources['.template'].node_graphql : config.resources['.template'].node,
         },
+        argv.graphql ? [
+          '@quanxiaoxiao/about-http',
+          '@quanxiaoxiao/router',
+          'dayjs',
+          'graphql',
+          'graphql-scalar-objectid',
+          'koa',
+          'koa-graphql',
+          'lodash',
+          'mongoose',
+          'mqtt',
+          'winston',
+        ] : [],
       );
     },
   )

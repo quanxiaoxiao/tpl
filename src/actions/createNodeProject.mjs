@@ -1,6 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
+import _ from 'lodash';
 import ora from 'ora';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import chalk from 'chalk';
@@ -17,8 +18,9 @@ import {
 } from 'rxjs/operators';
 import extractEslintDependecies from '../lib/extractEslintDependecies.mjs';
 import extractBabelDependecies from '../lib/extractBabelDependecies.mjs';
+import parseConfig from '../lib/parseConfig.mjs';
 
-export default (target, config) => {
+export default (target, config, dependencies = []) => {
   if (shelljs.test('-d', target)) {
     console.log(`\`${chalk.red(target)}\` alreay exist`);
     process.exit(1);
@@ -27,25 +29,24 @@ export default (target, config) => {
   shelljs.mkdir(target);
   process.chdir(target);
   shelljs.exec('npm init -y', { silent: true });
-  from(Object.entries(config.resources))
+  from(parseConfig(config.resources))
     .pipe(
-      map(([filename, resource]) => ({
-        filename,
-        resource,
-      })),
       concatMap((obj) => defer(async () => {
         const buf = await fetchData({
           url: `${config.url.replace(/{{[^}]+}}/, obj.resource)}`,
           match: (statusCode) => statusCode === 200,
         });
         return {
-          name: obj.filename,
+          ...obj,
           buf,
         };
       })),
       tap((obj) => {
-        fs.writeFileSync(path.resolve(target, obj.name), obj.buf);
-        console.log(`create \`${chalk.green(path.resolve(target, obj.name))}\``);
+        if (!shelljs.test('-d', obj.dirname)) {
+          shelljs.mkdir('-p', obj.dirname);
+        }
+        fs.writeFileSync(obj.path, obj.buf);
+        console.log(`create \`${chalk.green(obj.path)}\``);
       }),
       map((obj) => {
         if (obj.name === '.eslintrc') {
@@ -68,9 +69,14 @@ export default (target, config) => {
       reduce((acc, cur) => [...acc, ...cur.dependencies], []),
     )
     .subscribe(
-      (dependencies) => {
-        const npm = spawn('npm', ['install', '--save-dev', ...dependencies]);
-        const spinner = ora(`npm install --save-dev ${dependencies.join('  ')}`).start();
+      (devDependencies) => {
+        const npm = spawn('npm', [
+          'install',
+          ..._.isEmpty(dependencies) ? [] : ['--save', ...dependencies],
+          '--save-dev',
+          ...devDependencies,
+        ]);
+        const spinner = ora(`npm install ${_.isEmpty(dependencies) ? '' : `--save ${dependencies.join(' ')}\n`}--save-dev ${devDependencies.join(' ')}`).start();
         npm.stdout.on('data', (chunk) => {
           process.stdin.write(chunk);
         });
@@ -84,7 +90,7 @@ export default (target, config) => {
           spinner.stop();
           fs.writeFileSync(path.join(target, '.tplconfig'), JSON.stringify({
             url: config.url,
-            resources: config.resources,
+            _: config.resources,
           }, null, 2));
           process.exit(code);
         });
