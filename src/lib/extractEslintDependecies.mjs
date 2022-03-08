@@ -10,8 +10,6 @@ export default (buf) => {
     result.push(...Array.isArray(data.extends) ? data.extends : [data.extends]);
   }
 
-  result.push(...data.plugins || []);
-
   if (result.find((s) => /airbnb/.test(s))) {
     const ret = shelljs.exec('npm info "eslint-config-airbnb@latest" peerDependencies', { silent: true });
     if (ret.code !== 0) {

@@ -5,6 +5,7 @@ dist
 *.tar
 .DS_store
 .tplconfig
+.tpljsx
 db.json
 
 # Swap

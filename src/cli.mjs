@@ -13,6 +13,7 @@ import diff from './actions/diff.mjs';
 import push from './actions/push.mjs';
 import upload from './actions/upload.mjs';
 import createReactComponent from './actions/createReactComponent.mjs';
+import createReactProject from './actions/createReactProject.mjs';
 import getLocalConfig from './lib/getLocalConfig.mjs';
 import getGlobalConfig from './lib/getGlobalConfig.mjs';
 import merge from './lib/mergeObj.mjs';
@@ -24,7 +25,7 @@ if (!shelljs.test('-f', resolve(os.homedir(), CONFIG_NAME))) {
   process.exit(1);
 }
 
-const options = (_) => {
+const globalOptions = (_) => {
   _.options({
     g: {
       alias: 'global',
@@ -58,6 +59,29 @@ yargs(hideBin(process.argv))
         ...config,
         resources: data[argv.type],
       });
+    },
+  )
+  .command(
+    'react [name]',
+    'create react project',
+    (_) => {
+      _.options({
+        name: {
+          demandOption: true,
+          type: 'string',
+          describe: 'project name',
+        },
+      });
+    },
+    (argv) => {
+      const config = getGlobalConfig();
+      createReactProject(
+        resolve(process.cwd(), argv.name),
+        {
+          ...config,
+          resources: config.resources['.template'].react.project,
+        },
+      );
     },
   )
   .command(
@@ -102,7 +126,7 @@ yargs(hideBin(process.argv))
   .command(
     'pull',
     'pull resource',
-    options,
+    globalOptions,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
       const { resources } = config;
@@ -119,7 +143,7 @@ yargs(hideBin(process.argv))
   .command(
     'upload',
     'upload resource',
-    options,
+    globalOptions,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
       const { resources } = config;
@@ -142,7 +166,7 @@ yargs(hideBin(process.argv))
   .command(
     'diff',
     'compare resource at store',
-    options,
+    globalOptions,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
       const { resources } = config;
@@ -159,7 +183,7 @@ yargs(hideBin(process.argv))
   .command(
     'push',
     'upload resource to store',
-    options,
+    globalOptions,
     (argv) => {
       const config = argv.global ? getGlobalConfig() : getLocalConfig();
       const { resources } = config;

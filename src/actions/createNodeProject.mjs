@@ -19,14 +19,10 @@ import {
 import extractEslintDependecies from '../lib/extractEslintDependecies.mjs';
 import extractBabelDependecies from '../lib/extractBabelDependecies.mjs';
 import parseConfig from '../lib/parseConfig.mjs';
+import mkdir from '../lib/mkdir.mjs';
 
 export default (target, config, dependencies = []) => {
-  if (shelljs.test('-d', target)) {
-    console.log(`\`${chalk.red(target)}\` alreay exist`);
-    process.exit(1);
-  }
-  console.log(`create \`${chalk.green(target)}\``);
-  shelljs.mkdir(target);
+  mkdir(target);
   process.chdir(target);
   shelljs.exec('npm init -y', { silent: true });
   from(parseConfig(config.resources))

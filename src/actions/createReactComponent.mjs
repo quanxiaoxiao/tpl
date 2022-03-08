@@ -4,6 +4,7 @@ import shelljs from 'shelljs';
 import chalk from 'chalk';
 import { fetchData } from '@quanxiaoxiao/about-http';
 import parseConfig from '../lib/parseConfig.mjs';
+import mkdir from '../lib/mkdir.mjs';
 
 export default async (componentPathname, config) => {
   const name = basename(componentPathname);
@@ -11,11 +12,7 @@ export default async (componentPathname, config) => {
     console.log(`component name \`${chalk.red(name)}\` invalid`);
     process.exit(1);
   }
-  if (shelljs.test('-d', componentPathname)) {
-    console.log(`\`${chalk.red(componentPathname)}\` already exist`);
-    process.exit(1);
-  }
-  shelljs.mkdir('-p', componentPathname);
+  mkdir(componentPathname);
   await parseConfig(config.resources, componentPathname).reduce(async (acc, cur) => {
     await acc;
     try {
