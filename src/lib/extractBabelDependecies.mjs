@@ -22,5 +22,16 @@ export default (buf) => {
     result.push(...extract(data.env.production.plugins));
   }
 
-  return Array.from(new Set(result)).map((s) => (s === '@emotion' ? '@emotion/eslint-plugin' : s));
+  return Array
+    .from(new Set(result))
+    .filter((s) => s !== '@emotion')
+    .map((s) => {
+      if (s === 'transform-react-remove-prop-types') {
+        return 'babel-plugin-transform-react-remove-prop-types';
+      }
+      if (s === 'react-hot-loader/babel') {
+        return 'react-hot-loader';
+      }
+      return s;
+    });
 };
