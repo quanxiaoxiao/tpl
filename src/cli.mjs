@@ -58,42 +58,41 @@ yargs(hideBin(process.argv))
         process.exit(1);
       }
       const name = fileNameMatches[1];
-      const dir = path.slice(0, path.length - name.length).replace(/\/$/, '');
-      const target = dir[0] === '/' ? dir : resolve(process.cwd(), dir);
-      if (shelljs.test('-d', target)) {
-        console.warn(`\`${chalk.red(target)}\` alread exist`);
+      const targetDir = path;
+      if (shelljs.test('-d', targetDir)) {
+        console.warn(`\`${chalk.red(targetDir)}\` alread exist`);
       } else {
-        shelljs.mkdir('-p', target);
-        console.log(`create dir \`${chalk.green(target)}\``);
+        shelljs.mkdir('-p', targetDir);
+        console.log(`create dir \`${chalk.green(targetDir)}\``);
       }
       generateFile(
-        resolve(target, 'index.js'),
+        resolve(targetDir, 'index.js'),
         readFileSync(config.templates.index, 'utf-8'),
         name,
       );
       generateFile(
-        resolve(target, `${name}.js`),
+        resolve(targetDir, `${name}.js`),
         readFileSync(config.templates.component, 'utf-8'),
         name,
       );
       if (argv.type === 'reducer') {
         generateFile(
-          resolve(target, 'Context.js'),
+          resolve(targetDir, 'Context.js'),
           readFileSync(config.templates.context, 'utf-8'),
           name,
         );
         generateFile(
-          resolve(target, 'useStore.js'),
+          resolve(targetDir, 'useStore.js'),
           readFileSync(config.templates.useStore, 'utf-8'),
           name,
         );
         generateFile(
-          resolve(target, 'reducer.js'),
+          resolve(targetDir, 'reducer.js'),
           readFileSync(config.templates.reducer, 'utf-8'),
           name,
         );
         generateFile(
-          resolve(target, 'useRedux.js'),
+          resolve(targetDir, 'useRedux.js'),
           readFileSync(config.templates.useRedux, 'utf-8'),
           name,
         );
