@@ -11,16 +11,16 @@ import { hideBin } from 'yargs/helpers';
 
 const pkg = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
-const configBase = process.cwd();
+const configBase = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'templates');
 
 const config = {
   templates: {
-    index: resolve(configBase, 'templates', 'index.js'),
-    component: resolve(configBase, 'templates', 'Component.js'),
-    context: resolve(configBase, 'templates', 'Component.js'),
-    useStore: resolve(configBase, 'templates', 'Context.js'),
-    reducer: resolve(configBase, 'templates', 'reducer.js'),
-    useRedux: resolve(configBase, 'templates', 'useRedux.js'),
+    index: resolve(configBase, 'index.js'),
+    component: resolve(configBase, 'Component.js'),
+    context: resolve(configBase, 'Component.js'),
+    useStore: resolve(configBase, 'Context.js'),
+    reducer: resolve(configBase, 'reducer.js'),
+    useRedux: resolve(configBase, 'useRedux.js'),
   },
 };
 
