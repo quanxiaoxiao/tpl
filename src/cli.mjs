@@ -1,38 +1,36 @@
-import os from 'node:os';
-import { readFileSync, writeFileSync } from 'node:fs';
+import {
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import shelljs from 'shelljs';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { CONFIG_NAME } from './constants.mjs';
-import createNodeProject from './actions/createNodeProject.mjs';
-import pull from './actions/pull.mjs';
-import diff from './actions/diff.mjs';
-import push from './actions/push.mjs';
-import upload from './actions/upload.mjs';
-import createReactComponent from './actions/createReactComponent.mjs';
-import createReactProject from './actions/createReactProject.mjs';
-import getLocalConfig from './lib/getLocalConfig.mjs';
-import getGlobalConfig from './lib/getGlobalConfig.mjs';
-import merge from './lib/mergeObj.mjs';
 
 const pkg = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
 
-if (!shelljs.test('-f', resolve(os.homedir(), CONFIG_NAME))) {
-  console.log(`global config \`${chalk.red(CONFIG_NAME)}\` not found`);
-  process.exit(1);
-}
+const configBase = process.cwd();
 
-const globalOptions = (_) => {
-  _.options({
-    g: {
-      alias: 'global',
-      describe: 'config use global',
-      type: 'boolean',
-    },
-  });
+const config = {
+  templates: {
+    index: resolve(configBase, 'templates', 'index.js'),
+    component: resolve(configBase, 'templates', 'Component.js'),
+    context: resolve(configBase, 'templates', 'Component.js'),
+    useStore: resolve(configBase, 'templates', 'Context.js'),
+    reducer: resolve(configBase, 'templates', 'reducer.js'),
+    useRedux: resolve(configBase, 'templates', 'useRedux.js'),
+  },
+};
+
+const generateFile = (target, str, name) => {
+  if (!shelljs.test('-f', target)) {
+    writeFileSync(target, str.replace(/{{[^}]+}}/g, name), 'utf-8');
+    console.log(`generate file \`${chalk.green(target)}\``);
+  } else {
+    console.log(`file \`${chalk.red(target)}\` already exit`);
+  }
 };
 
 yargs(hideBin(process.argv))
@@ -47,154 +45,59 @@ yargs(hideBin(process.argv))
         },
         type: {
           type: 'string',
-          choices: ['component', 'reducer', 'memo'],
-          default: 'component',
+          choices: ['memo', 'reducer'],
+          default: 'memo',
         },
       });
     },
     (argv) => {
-      const config = getGlobalConfig();
-      const data = config.resources['.template'].react;
-      createReactComponent(resolve(process.cwd(), argv.path), {
-        ...config,
-        resources: data[argv.type],
-      });
-    },
-  )
-  .command(
-    'react [name]',
-    'create react project',
-    (_) => {
-      _.options({
-        name: {
-          demandOption: true,
-          type: 'string',
-          describe: 'project name',
-        },
-      });
-    },
-    (argv) => {
-      const config = getGlobalConfig();
-      createReactProject(
-        resolve(process.cwd(), argv.name),
-        {
-          ...config,
-          resources: config.resources['.template'].react.project,
-        },
+      const { path } = argv;
+      const fileNameMatches = path.match(/\/?([A-Z]\w+)$/);
+      if (!fileNameMatches) {
+        console.warn(`\`${chalk.red(path)}\` invalid`);
+        process.exit(1);
+      }
+      const name = fileNameMatches[1];
+      const dir = path.slice(0, path.length - name.length).replace(/\/$/, '');
+      const target = dir[0] === '/' ? dir : resolve(process.cwd(), dir);
+      if (shelljs.test('-d', target)) {
+        console.warn(`\`${chalk.red(target)}\` alread exist`);
+      } else {
+        shelljs.mkdir('-p', target);
+        console.log(`create dir \`${chalk.green(target)}\``);
+      }
+      generateFile(
+        resolve(target, 'index.js'),
+        readFileSync(config.templates.index, 'utf-8'),
+        name,
       );
-    },
-  )
-  .command(
-    'node [name]',
-    'create node project',
-    (_) => {
-      _.options({
-        name: {
-          demandOption: true,
-          type: 'string',
-          describe: 'project name',
-        },
-        graphql: {
-          type: 'boolean',
-        },
-      });
-    },
-    (argv) => {
-      const config = getGlobalConfig();
-      createNodeProject(
-        resolve(process.cwd(), argv.name),
-        {
-          ...config,
-          resources: argv.graphql ? config.resources['.template'].node_graphql : config.resources['.template'].node,
-        },
-        argv.graphql ? [
-          '@quanxiaoxiao/about-http',
-          '@quanxiaoxiao/router',
-          'dayjs',
-          'graphql',
-          'graphql-scalar-objectid',
-          'koa',
-          'koa-graphql',
-          'lodash',
-          'mongoose',
-          'mqtt',
-          'winston',
-        ] : [],
+      generateFile(
+        resolve(target, `${name}.js`),
+        readFileSync(config.templates.component, 'utf-8'),
+        name,
       );
-    },
-  )
-  .command(
-    'pull',
-    'pull resource',
-    globalOptions,
-    (argv) => {
-      const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const { resources } = config;
-      if (!resources) {
-        console.log('config resources is empty');
-        process.exit(1);
+      if (argv.type === 'reducer') {
+        generateFile(
+          resolve(target, 'Context.js'),
+          readFileSync(config.templates.context, 'utf-8'),
+          name,
+        );
+        generateFile(
+          resolve(target, 'useStore.js'),
+          readFileSync(config.templates.useStore, 'utf-8'),
+          name,
+        );
+        generateFile(
+          resolve(target, 'reducer.js'),
+          readFileSync(config.templates.reducer, 'utf-8'),
+          name,
+        );
+        generateFile(
+          resolve(target, 'useRedux.js'),
+          readFileSync(config.templates.useRedux, 'utf-8'),
+          name,
+        );
       }
-      pull({
-        ...config,
-        resources,
-      });
-    },
-  )
-  .command(
-    'upload',
-    'upload resource',
-    globalOptions,
-    (argv) => {
-      const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const { resources } = config;
-      if (!resources) {
-        console.log('config resources is empty');
-        process.exit(1);
-      }
-      upload({
-        ...config,
-        resources,
-      }, (resourcesNew) => {
-        const raw = JSON.parse(readFileSync(config.path));
-        merge(raw, {
-          _: resourcesNew,
-        });
-        writeFileSync(config.path, JSON.stringify(raw, null, 2));
-      });
-    },
-  )
-  .command(
-    'diff',
-    'compare resource at store',
-    globalOptions,
-    (argv) => {
-      const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const { resources } = config;
-      if (!resources) {
-        console.log('config resources is empty');
-        process.exit(1);
-      }
-      diff({
-        ...config,
-        resources,
-      });
-    },
-  )
-  .command(
-    'push',
-    'upload resource to store',
-    globalOptions,
-    (argv) => {
-      const config = argv.global ? getGlobalConfig() : getLocalConfig();
-      const { resources } = config;
-      if (!resources) {
-        console.log('config resources is empty');
-        process.exit(1);
-      }
-      push({
-        ...config,
-        resources,
-      });
     },
   )
   .demandCommand(1)
