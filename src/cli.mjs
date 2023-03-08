@@ -17,8 +17,9 @@ const config = {
   templates: {
     index: resolve(configBase, 'index.js'),
     component: resolve(configBase, 'Component.js'),
-    context: resolve(configBase, 'Component.js'),
-    useStore: resolve(configBase, 'Context.js'),
+    reduxComponent: resolve(configBase, 'ReduxComponent.js'),
+    context: resolve(configBase, 'Context.js'),
+    useStore: resolve(configBase, 'useStore.js'),
     reducer: resolve(configBase, 'reducer.js'),
     useRedux: resolve(configBase, 'useRedux.js'),
   },
@@ -70,12 +71,19 @@ yargs(hideBin(process.argv))
         readFileSync(config.templates.index, 'utf-8'),
         name,
       );
-      generateFile(
-        resolve(targetDir, `${name}.js`),
-        readFileSync(config.templates.component, 'utf-8'),
-        name,
-      );
+      if (argv.type === 'memo') {
+        generateFile(
+          resolve(targetDir, `${name}.js`),
+          readFileSync(config.templates.component, 'utf-8'),
+          name,
+        );
+      }
       if (argv.type === 'reducer') {
+        generateFile(
+          resolve(targetDir, `${name}.js`),
+          readFileSync(config.templates.reduxComponent, 'utf-8'),
+          name,
+        );
         generateFile(
           resolve(targetDir, 'Context.js'),
           readFileSync(config.templates.context, 'utf-8'),

@@ -10,7 +10,7 @@ const useRedux = () => {
 
   const dispatch = useMemo(() => ({
     ...Object
-      .keys(_dispatch)
+      .keys(actions)
       .reduce((acc, actionName) => ({
         ...acc,
         [actionName]: (payload) => _dispatch(actions[actionName](payload)),
