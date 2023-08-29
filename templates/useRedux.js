@@ -6,7 +6,9 @@ const useRedux = () => {
 
   const state = useMemo(() => ({
     ..._state,
-  }), [_state]);
+  }), [
+    _state,
+  ]);
 
   const dispatch = useMemo(() => ({
     ...Object
