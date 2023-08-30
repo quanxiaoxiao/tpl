@@ -1,12 +1,8 @@
 node_modules
 logger
-dist
 *.log
 *.tar
 .DS_store
-.tplconfig
-.tpljsx
-db.json
 
 # Swap
 [._]*.s[a-v][a-z]
@@ -27,4 +23,3 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
-
