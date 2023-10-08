@@ -4,6 +4,8 @@ logger
 *.tar
 .DS_store
 .env
+_index.mjs
+_index.js
 
 # Swap
 [._]*.s[a-v][a-z]
