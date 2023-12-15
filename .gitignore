@@ -6,6 +6,7 @@ logger
 .env
 _index.mjs
 _index.js
+_temp
 
 # Swap
 [._]*.s[a-v][a-z]
