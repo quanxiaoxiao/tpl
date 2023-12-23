@@ -1,7 +1,4 @@
-import {
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import {
@@ -12,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import ora from 'ora';
 import shelljs from 'shelljs';
 import chalk from 'chalk';
+import pkg from '../package.json' with { type: 'json' };
 
 const basePath = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -23,7 +21,6 @@ const resources = {
 };
 
 export default (name) => {
-  const pkg = JSON.parse(readFileSync(resolve(basePath, 'package.json'), 'utf-8'));
   const targetDir = resolve(cwd(), name);
   if (shelljs.test('-d', targetDir)) {
     console.warn(`\`${chalk.red(targetDir)}\` alread exist`);

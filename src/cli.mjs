@@ -1,14 +1,8 @@
-import {
-  readFileSync,
-} from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import generateTypeByReact from './react.mjs';
 import generateTypeByNodejs from './nodejs.mjs';
-
-const pkg = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'));
+import pkg from '../package.json' with { type: 'json' };
 
 yargs(hideBin(process.argv))
   .command(
