@@ -38,7 +38,9 @@ export default (name) => {
     name,
     version: '0.0.1',
     type: 'module',
-    scripts: {},
+    scripts: {
+      lint: 'tsc',
+    },
     dependencies: {},
     devDependencies: {},
     engines: {
@@ -49,6 +51,21 @@ export default (name) => {
   shelljs.mkdir(resolve(targetDir, 'src'));
   console.log(`create dir \`${chalk.green(resolve(targetDir, 'src'))}\``);
   writeFileSync(resolve(targetDir, 'src', 'index.mjs'), 'console.log(\'hello, world\');');
+  writeFileSync(resolve(targetDir, 'tsconfig.json'), JSON.stringify({
+    compilerOptions: {
+      target: 'es2016',
+      module: 'commonjs',
+      esModuleInterop: true,
+      forceConsistentCasingInFileNames: true,
+      strict: true,
+      skipLibCheck: true,
+      outDir: 'dist',
+      declaration: true,
+      allowJs: true,
+      checkJs: true,
+    },
+    include: ['src/**/*.mjs'],
+  }, null, 2));
   console.log(`create file \`${chalk.green(resolve(targetDir, 'src', 'index.mjs'))}\``);
   const dependencyList = Object
     .keys(pkg.devDependencies)
@@ -61,6 +78,8 @@ export default (name) => {
       }
       return -1;
     });
+  dependencyList.push('typescript');
+  dependencyList.push('@types/node');
   console.log(`will add devDependencies \`${chalk.green(dependencyList.join(' '))}\``);
   const install = spawn('npm', ['install', '--save-dev', ...dependencyList], {
     cwd: targetDir,
