@@ -1,6 +1,7 @@
 node_modules
 logger
 *.log
+dist
 *.tar
 .DS_store
 .env
