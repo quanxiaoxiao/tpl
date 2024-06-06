@@ -2,7 +2,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import generateTypeByReact from './react.mjs';
 import generateTypeByNodejs from './nodejs.mjs';
-import pkg from '../package.json' with { type: 'json' };
+import getPackageInfo from './getPackageInfo.mjs';
+
 
 yargs(hideBin(process.argv))
   .command(
@@ -45,5 +46,5 @@ yargs(hideBin(process.argv))
     },
   )
   .demandCommand(1)
-  .version(pkg.version)
+  .version(getPackageInfo().version)
   .parse();
