@@ -39,10 +39,14 @@ yargs(hideBin(process.argv))
           demandOption: true,
           type: 'string',
         },
+        http: {
+          type: 'boolean',
+          default: false,
+        },
       });
     },
     (argv) => {
-      generateTypeByNodejs(argv.name);
+      generateTypeByNodejs(argv.name, argv.http);
     },
   )
   .demandCommand(1)
