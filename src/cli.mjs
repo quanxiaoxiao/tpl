@@ -2,7 +2,7 @@ import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import generateTypeByReact from './react.mjs';
-import generateTypeByNodejs from './nodejs.mjs';
+// import generateTypeByNodejs from './nodejs.mjs';
 import getPackageInfo from './getPackageInfo.mjs';
 
 
@@ -47,7 +47,7 @@ yargs(hideBin(process.argv))
       });
     },
     (argv) => {
-      generateTypeByNodejs(argv.name, argv.http);
+      // generateTypeByNodejs(argv.name, argv.http);
     },
   )
   .demandCommand(1)
