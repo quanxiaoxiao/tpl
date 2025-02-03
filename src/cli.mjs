@@ -16,27 +16,34 @@ yargs(hideBin(process.argv))
     'config',
     'config...',
     (_) => {
-      _.options({
-        type: {
-          type: 'string',
-          choices: [
-            'eslint',
-            'gitignore',
-            'editorconfig',
-            'dockerfile',
-            'docker-compose',
-            'vimrc',
-            'tmux.conf',
-          ],
-          demandOption: true,
-        },
-        diff: {
-          type: 'boolean',
-        },
-        push: {
-          type: 'boolean',
-        },
-      });
+      _
+        .options({
+          type: {
+            type: 'string',
+            choices: [
+              'eslint',
+              'gitignore',
+              'editorconfig',
+              'dockerfile',
+              'docker-compose',
+              'vimrc',
+              'tmux.conf',
+            ],
+            demandOption: true,
+          },
+          load: {
+            type: 'boolean',
+          },
+          diff: {
+            type: 'boolean',
+          },
+          push: {
+            type: 'boolean',
+          },
+        })
+        .conflicts('load', 'diff')
+        .conflicts('diff', 'push')
+        .conflicts('load', 'push');
     },
     (argv) => {
       if (argv.diff) {
