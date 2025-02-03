@@ -1,12 +1,46 @@
+import os from 'node:os';
+import path from 'node:path';
 import process from 'node:process';
+
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import generateTypeByReact from './react.mjs';
+
 // import generateTypeByNodejs from './nodejs.mjs';
 import getPackageInfo from './getPackageInfo.mjs';
-
+import loadConfig from './loadConfig.mjs';
+import generateTypeByReact from './react.mjs';
 
 yargs(hideBin(process.argv))
+  .command(
+    'config',
+    'config...',
+    (_) => {
+      _.options({
+        type: {
+          type: 'string',
+          choices: [
+            'eslint',
+            'gitignore',
+            'editorconfig',
+            'dockerfile',
+            'docker-compose',
+            'vimrc',
+            'tmux.conf',
+          ],
+          demandOption: true,
+        },
+        diff: {
+          type: 'boolean',
+        },
+        push: {
+          type: 'boolean',
+        },
+      });
+    },
+    (argv) => {
+      loadConfig(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+    },
+  )
   .command(
     'comp [path]',
     'create react component',

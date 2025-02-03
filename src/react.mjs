@@ -2,10 +2,11 @@ import {
   readFileSync,
   writeFileSync,
 } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { dirname,resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import shelljs from 'shelljs';
+
 import chalk from 'chalk';
+import shelljs from 'shelljs';
 
 const configBase = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'templates', 'react');
 

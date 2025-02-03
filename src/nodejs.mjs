@@ -1,14 +1,16 @@
 import assert from 'node:assert';
-import { writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
-import { resolve, dirname } from 'node:path';
+import { writeFileSync } from 'node:fs';
+import { dirname,resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+
+import { getFileList } from '@quanxiaoxiao/node-utils';
+import chalk from 'chalk';
 import _ from 'lodash';
 import ora from 'ora';
 import shelljs from 'shelljs';
-import chalk from 'chalk';
-import { getFileList } from '@quanxiaoxiao/node-utils';
+
 import getPackageInfo from './getPackageInfo.mjs';
 
 const basePath = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -102,7 +104,7 @@ export default async (name, isHttpServer) => {
     console.log(`create file \`${chalk.green(resolve(targetDir, 'src', 'index.mjs'))}\``);
   }
   const devDependencyList = Object
-    .keys(getPackageInfo().devDependencies)
+    .keys(getPackageInfo().devDependencies);
   await installPackage(targetDir, devDependencyList, true);
   await installPackage(targetDir, dependencyList, false);
 };
