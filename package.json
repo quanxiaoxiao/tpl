@@ -13,6 +13,7 @@
     "@quanxiaoxiao/node-utils": "^0.15.0",
     "@quanxiaoxiao/utils": "^0.15.0",
     "chalk": "^5.0.0",
+    "diff": "^7.0.0",
     "lodash": "^4.17.21",
     "ora": "^8.0.1",
     "shelljs": "^0.8.5",

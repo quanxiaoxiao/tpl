@@ -5,9 +5,10 @@ import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
+import diffResource from './diffResource.mjs';
 // import generateTypeByNodejs from './nodejs.mjs';
 import getPackageInfo from './getPackageInfo.mjs';
-import loadConfig from './loadConfig.mjs';
+import loadResource from './loadResource.mjs';
 import generateTypeByReact from './react.mjs';
 
 yargs(hideBin(process.argv))
@@ -38,7 +39,11 @@ yargs(hideBin(process.argv))
       });
     },
     (argv) => {
-      loadConfig(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+      if (argv.diff) {
+        diffResource(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+      } else {
+        loadResource(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+      }
     },
   )
   .command(
