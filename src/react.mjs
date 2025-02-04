@@ -1,20 +1,10 @@
-import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { template } from '@quanxiaoxiao/utils';
 import chalk from 'chalk';
 import shelljs from 'shelljs';
 
 import fetchResource from './fetchResource.mjs';
-
-const generateFile = (target, str, name) => {
-  if (!shelljs.test('-f', target)) {
-    writeFileSync(target, template(str)({ name }));
-    console.log(`generate file \`${chalk.green(target)}\``);
-  } else {
-    console.log(`file \`${chalk.red(target)}\` already exit`);
-  }
-};
+import writeFile from './writeFile.mjs';
 
 export default async ({
   type,
@@ -35,14 +25,14 @@ export default async ({
   shelljs.mkdir('-p', targetDir);
   console.log(`create dir \`${chalk.green(targetDir)}\``);
   const resourceWithIndex = await fetchResource('reactComponentIndex', configPathname);
-  generateFile(
+  writeFile(
     resolve(targetDir, 'index.js'),
     resourceWithIndex,
     name,
   );
   if (type === 'memo') {
     const resourceWithComponent = await fetchResource('reactComponent', configPathname);
-    generateFile(
+    writeFile(
       resolve(targetDir, `${name}.js`),
       resourceWithComponent,
       name,
@@ -59,22 +49,22 @@ export default async ({
       fetchResource('reactUseStore', configPathname),
       fetchResource('reactUseRedux', configPathname),
     ]);
-    generateFile(
+    writeFile(
       resolve(targetDir, `${name}.js`),
       resourceWithContainer,
       name,
     );
-    generateFile(
+    writeFile(
       resolve(targetDir, 'Context.js'),
       resourceWithContext,
       name,
     );
-    generateFile(
+    writeFile(
       resolve(targetDir, 'useStore.js'),
       resourceWithUseStore,
       name,
     );
-    generateFile(
+    writeFile(
       resolve(targetDir, 'useRedux.js'),
       resourceWithUseRedux,
       name,
