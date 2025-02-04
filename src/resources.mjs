@@ -21,7 +21,7 @@ export default {
   },
   editorconfig: {
     filename: '.editorconfig',
-    pathname: ['template', '.editorconfig'],
+    pathname: ['template', 'editorconfig'],
   },
   dockerfile: {
     filename: 'Dockfile',
