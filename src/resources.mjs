@@ -35,4 +35,12 @@ export default {
     filename: '.vimrc',
     pathname: ['template', 'vimrc'],
   },
+  reactComponentIndex: {
+    filename: 'index.js',
+    pathname: ['template', 'react', 'component-index'],
+  },
+  reactComponent: {
+    filename: '{{name}}.js',
+    pathname: ['template', 'react', 'component'],
+  },
 };

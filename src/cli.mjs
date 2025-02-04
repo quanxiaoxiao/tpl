@@ -18,7 +18,7 @@ yargs(hideBin(process.argv))
     (_) => {
       _
         .options({
-          type: {
+          name: {
             type: 'string',
             choices: [
               'eslint',
@@ -47,9 +47,11 @@ yargs(hideBin(process.argv))
     },
     (argv) => {
       if (argv.diff) {
-        diffResource(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+        diffResource(argv.name, path.resolve(os.homedir(), '.quan.config.json'));
+      } else if (argv.push) {
+        // ignore
       } else {
-        loadResource(argv.type, path.resolve(os.homedir(), '.quan.config.json'));
+        loadResource(argv.name, path.resolve(os.homedir(), '.quan.config.json'));
       }
     },
   )
@@ -64,36 +66,16 @@ yargs(hideBin(process.argv))
         },
         type: {
           type: 'string',
-          choices: ['memo', 'reducer'],
+          choices: ['memo', 'redux'],
           default: 'memo',
         },
       });
     },
     (argv) => {
-      const { path, type } = argv;
       generateTypeByReact({
-        path,
-        type,
+        path: argv.path,
+        type: argv.type,
       });
-    },
-  )
-  .command(
-    'node [name]',
-    'create nodejs project',
-    (_) => {
-      _.options({
-        name: {
-          demandOption: true,
-          type: 'string',
-        },
-        http: {
-          type: 'boolean',
-          default: false,
-        },
-      });
-    },
-    (argv) => {
-      // generateTypeByNodejs(argv.name, argv.http);
     },
   )
   .demandCommand(1)
