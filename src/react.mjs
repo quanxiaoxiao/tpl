@@ -48,6 +48,36 @@ export default async ({
       name,
     );
   } else if (type === 'redux') {
-    // ignore
+    const [
+      resourceWithContext,
+      resourceWithContainer,
+      resourceWithUseStore,
+      resourceWithUseRedux,
+    ] = await Promise.all([
+      fetchResource('reactContext', configPathname),
+      fetchResource('reactContainer', configPathname),
+      fetchResource('reactUseStore', configPathname),
+      fetchResource('reactUseRedux', configPathname),
+    ]);
+    generateFile(
+      resolve(targetDir, `${name}.js`),
+      resourceWithContainer,
+      name,
+    );
+    generateFile(
+      resolve(targetDir, 'Context.js'),
+      resourceWithContext,
+      name,
+    );
+    generateFile(
+      resolve(targetDir, 'useStore.js'),
+      resourceWithUseStore,
+      name,
+    );
+    generateFile(
+      resolve(targetDir, 'useRedux.js'),
+      resourceWithUseRedux,
+      name,
+    );
   }
 };

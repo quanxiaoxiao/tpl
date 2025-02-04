@@ -43,4 +43,20 @@ export default {
     filename: '{{name}}.js',
     pathname: ['template', 'react', 'component'],
   },
+  reactContainer: {
+    filename: '{{name}}.js',
+    pathname: ['template', 'react', 'container'],
+  },
+  reactUseStore: {
+    filename: 'useStore.js',
+    pathname: ['template', 'react', 'use-store'],
+  },
+  reactUseRedux: {
+    filename: 'useRedux.js',
+    pathname: ['template', 'react', 'use-redux'],
+  },
+  reactContext: {
+    filename: 'Context.js',
+    pathname: ['template', 'react', 'context'],
+  },
 };
