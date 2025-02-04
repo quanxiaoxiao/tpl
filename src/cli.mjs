@@ -6,9 +6,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import diffResource from './diffResource.mjs';
-// import generateTypeByNodejs from './nodejs.mjs';
 import getPackageInfo from './getPackageInfo.mjs';
 import loadResource from './loadResource.mjs';
+import generateTypeByNodejs from './nodejs.mjs';
 import generateTypeByReact from './react.mjs';
 
 const configPathname = path.resolve(os.homedir(), '.quan.config.json');
@@ -77,6 +77,24 @@ yargs(hideBin(process.argv))
       generateTypeByReact({
         path: argv.path,
         type: argv.type,
+        configPathname,
+      });
+    },
+  )
+  .command(
+    'nodejs [path]',
+    'create nodejs project',
+    (_) => {
+      _.options({
+        path: {
+          demandOption: true,
+          type: 'string',
+        },
+      });
+    },
+    (argv) => {
+      generateTypeByNodejs({
+        path: argv.path,
         configPathname,
       });
     },
