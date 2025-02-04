@@ -75,6 +75,7 @@ yargs(hideBin(process.argv))
       generateTypeByReact({
         path: argv.path,
         type: argv.type,
+        configPathname: path.resolve(os.homedir(), '.quan.config.json'),
       });
     },
   )
