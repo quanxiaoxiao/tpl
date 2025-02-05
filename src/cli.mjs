@@ -91,13 +91,24 @@ yargs(hideBin(process.argv))
           demandOption: true,
           type: 'string',
         },
+        test: {
+          type: 'boolean',
+        },
       });
     },
     (argv) => {
-      generateTypeByNodejs({
-        path: argv.path,
-        configPathname,
-      });
+      if (argv.test) {
+        loadResource(
+          'nodejsTest',
+          configPathname,
+          argv.path,
+        );
+      } else {
+        generateTypeByNodejs({
+          path: argv.path,
+          configPathname,
+        });
+      }
     },
   )
   .demandCommand(1)

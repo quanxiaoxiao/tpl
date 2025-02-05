@@ -27,6 +27,10 @@ export default {
     filename: 'Dockfile',
     pathname: ['template', 'nodejs', 'dockfile'],
   },
+  nodejsTest: {
+    filename: '{{name}}.test.mjs',
+    pathname: ['template', 'nodejs', 'nodejs-test'],
+  },
   'docker-compose': {
     filename: 'docker-compose.yml',
     pathname: ['template', 'nodejs', 'docker-compose'],
