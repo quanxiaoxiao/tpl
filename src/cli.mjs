@@ -10,6 +10,7 @@ import getPackageInfo from './getPackageInfo.mjs';
 import loadResource from './loadResource.mjs';
 import generateTypeByNodejs from './nodejs.mjs';
 import generateTypeByReact from './react.mjs';
+import uploadResource from './uploadResource.mjs';
 
 const configPathname = path.resolve(os.homedir(), '.quan.config.json');
 
@@ -33,7 +34,7 @@ yargs(hideBin(process.argv))
             ],
             demandOption: true,
           },
-          load: {
+          pull: {
             type: 'boolean',
           },
           diff: {
@@ -43,16 +44,16 @@ yargs(hideBin(process.argv))
             type: 'boolean',
           },
         })
-        .conflicts('load', 'diff')
+        .conflicts('pull', 'diff')
         .conflicts('diff', 'push')
-        .conflicts('load', 'push');
+        .conflicts('pull', 'push');
     },
     (argv) => {
       if (argv.diff) {
         diffResource(argv.name, configPathname);
       } else if (argv.push) {
-        // ignore
-      } else {
+        uploadResource(argv.name, configPathname);
+      } else if (argv.pull) {
         loadResource(argv.name, configPathname);
       }
     },
