@@ -31,6 +31,14 @@ export default {
     filename: '{{name}}.test.mjs',
     pathname: ['template', 'nodejs', 'nodejs-test'],
   },
+  nodejsTestMongo: {
+    filename: '{{name}}.test.mjs',
+    pathname: ['template', 'nodejs', 'nodejs-test-mongo'],
+  },
+  nodejsModel: {
+    filename: '{{name}}.mjs',
+    pathname: ['template', 'nodejs', 'nodejs-mongo-model'],
+  },
   'docker-compose': {
     filename: 'docker-compose.yml',
     pathname: ['template', 'nodejs', 'docker-compose'],

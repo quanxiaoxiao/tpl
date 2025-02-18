@@ -94,12 +94,33 @@ yargs(hideBin(process.argv))
         test: {
           type: 'boolean',
         },
-      });
+        testMongo: {
+          type: 'boolean',
+        },
+        model: {
+          type: 'boolean',
+        },
+      })
+        .conflicts('test', 'model')
+        .conflicts('testMongo', 'model')
+        .conflicts('test', 'testMongo');
     },
     (argv) => {
       if (argv.test) {
         loadResource(
           'nodejsTest',
+          configPathname,
+          argv.path,
+        );
+      } else if (argv.model) {
+        loadResource(
+          'nodejsModel',
+          configPathname,
+          argv.path,
+        );
+      } else if (argv.testMongo) {
+        loadResource(
+          'nodejsTestMongo',
           configPathname,
           argv.path,
         );
