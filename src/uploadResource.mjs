@@ -15,5 +15,5 @@ export default async (type, configPathname) => {
     process.exit(1);
   }
   const requestUrl = getResourceUrl(type, configPathname);
-  await $`curl -X PUT --data-binary @${targetPathname} -s ${requestUrl}`;
+  await $`curl -s -X PUT --data-binary @${targetPathname} ${requestUrl}`;
 };
