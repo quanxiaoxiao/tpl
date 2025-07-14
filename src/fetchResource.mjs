@@ -18,7 +18,5 @@ export default async (type, configPathname) => {
   assert(hasDataKey(resources, type));
   const requestUrl = getResourceUrl(type, configPathname);
   const resultWithRequest = await $`curl -s ${requestUrl}`;
-  const data = JSON.parse(resultWithRequest).data;
-  assert(data);
-  return data;
+  return resultWithRequest.stdout;
 };
