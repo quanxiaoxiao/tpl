@@ -30,6 +30,7 @@ yargs(hideBin(process.argv))
               'dockerfile',
               'docker-compose',
               'vimrc',
+              'zshrc',
               'tmux.conf',
             ],
             demandOption: true,

@@ -47,6 +47,10 @@ export default {
     filename: '.vimrc',
     pathname: ['template', 'vimrc'],
   },
+  zshrc: {
+    filename: '.zshrc',
+    pathname: ['template', 'zshrc'],
+  },
   reactComponentIndex: {
     filename: 'index.js',
     pathname: ['template', 'react', 'component-index'],
