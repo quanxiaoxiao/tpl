@@ -1,6 +1,9 @@
+import assert from 'node:assert';
 import fs from 'node:fs';
-import path from 'node:path';
+import os from 'node:os';
+import process from 'node:process';
 
+import { template } from '@quanxiaoxiao/utils';
 import chalk from 'chalk';
 import * as Diff from 'diff';
 import shelljs from 'shelljs';
@@ -9,7 +12,11 @@ import fetchResource from './fetchResource.mjs';
 import resources from './resources.mjs';
 
 export default async (type, configPathname) => {
-  const targetPathname = path.resolve(process.cwd(), resources[type].filename);
+  assert(resources[type] && resources[type].localPath);
+  const targetPathname = template(resources[type].localPath)({
+    home: os.homedir(),
+    pwd: process.cwd(),
+  });
   const dataWithDest = await fetchResource(type, configPathname);
   let diffLine = [];
   if (shelljs.test('-f', targetPathname)) {

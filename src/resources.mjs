@@ -3,6 +3,7 @@ import { $ } from 'zx';
 export default {
   eslint: {
     filename: 'eslint.config.mjs',
+    localPath: '{{pwd}}/eslint.config.mjs',
     pathname: ['template', 'nodejs', 'eslint.config.mjs'],
     load: async () => {
       const devDependencies = [
@@ -17,15 +18,23 @@ export default {
   },
   gitignore: {
     filename: '.gitignore',
+    localPath: '{{pwd}}/.gitignore',
     pathname: ['template', 'gitignore'],
   },
   editorconfig: {
     filename: '.editorconfig',
+    localPath: '{{pwd}}/.editorconfig',
     pathname: ['template', 'editorconfig'],
   },
   dockerfile: {
     filename: 'Dockfile',
+    localPath: '{{pwd}}/Dockfile',
     pathname: ['template', 'nodejs', 'dockfile'],
+  },
+  tmux: {
+    filename: 'Dockfile',
+    localPath: '{{home}}/.tmux.conf',
+    pathname: ['template', 'tmux'],
   },
   nodejsTest: {
     filename: '{{name}}.test.mjs',
@@ -41,14 +50,17 @@ export default {
   },
   'docker-compose': {
     filename: 'docker-compose.yml',
+    localPath: '{{pwd}}/docker-compose.yml',
     pathname: ['template', 'nodejs', 'docker-compose'],
   },
   vimrc: {
     filename: '.vimrc',
+    localPath: '{{home}}/.vimrc',
     pathname: ['template', 'vimrc'],
   },
   zshrc: {
     filename: '.zshrc',
+    localPath: '{{home}}/.zshrc',
     pathname: ['template', 'zshrc'],
   },
   reactComponentIndex: {

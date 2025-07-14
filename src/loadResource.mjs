@@ -1,4 +1,6 @@
+import assert from 'node:assert';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 
@@ -27,10 +29,11 @@ export default async (resourceTypeName, configPathname, pathname) => {
       );
     }
   } else {
-    targetPathname = path.resolve(
-      process.cwd(),
-      resources[resourceTypeName].filename,
-    );
+    assert(resources[resourceTypeName] && resources[resourceTypeName].localPath);
+    targetPathname = template(resources[resourceTypeName].localPath)({
+      home: os.homedir(),
+      pwd: process.cwd(),
+    });
   }
   const data = await fetchResource(resourceTypeName, configPathname);
   if (!shelljs.test('-d', path.dirname(targetPathname))) {

@@ -10,6 +10,7 @@ import getPackageInfo from './getPackageInfo.mjs';
 import loadResource from './loadResource.mjs';
 import generateTypeByNodejs from './nodejs.mjs';
 import generateTypeByReact from './react.mjs';
+import resources from './resources.mjs';
 import uploadResource from './uploadResource.mjs';
 
 const configPathname = path.resolve(os.homedir(), '.quan.config.json');
@@ -24,14 +25,9 @@ yargs(hideBin(process.argv))
           name: {
             type: 'string',
             choices: [
-              'eslint',
-              'gitignore',
-              'editorconfig',
-              'dockerfile',
-              'docker-compose',
-              'vimrc',
-              'zshrc',
-              'tmux.conf',
+              ...Object
+                .keys(resources)
+                .filter((name) => resources[name].localPath),
             ],
             demandOption: true,
           },
