@@ -12,7 +12,7 @@ export default {
         'globals',
       ];
 
-      await $`npm install --save-dev ${devDependencies} --proxy http://127.0.0.1:4001`;
+      await $`npm install --save-dev ${devDependencies}`;
     },
   },
   gitignore: {
