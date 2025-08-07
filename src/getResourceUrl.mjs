@@ -1,24 +1,24 @@
 import assert from 'node:assert';
-import fs from 'node:fs';
+import process from 'node:process';
 
 import {
   getValueOfPathList,
-  hasDataKey,
   template,
 } from '@quanxiaoxiao/utils';
 import chalk from 'chalk';
-import shelljs from 'shelljs';
 
-import resources from './resources.mjs';
+import getConfig from './getConfig.mjs';
+import getResourceTargetByName from './getResourceTargetByName.mjs';
 
-export default (type, configPathname) => {
-  if (!shelljs.test('-f', configPathname)) {
-    console.log(`config \`${chalk.red(configPathname)}\` not found`);
+export default (name) => {
+  const config = getConfig();
+  const resourceTarget = getResourceTargetByName(name);
+  const resourceUrlWithDataKeyPath = resourceTarget.pathname;
+  assert(Array.isArray(resourceUrlWithDataKeyPath));
+  const requestUrl = getValueOfPathList(resourceUrlWithDataKeyPath)(config);
+  if (!requestUrl) {
+    console.log(`config ${chalk.red(resourceUrlWithDataKeyPath.join('.'))} unset`);
     process.exit(1);
   }
-  const config = JSON.parse(fs.readFileSync(configPathname));
-  assert(hasDataKey(resources, type));
-  const requestUrl = template(getValueOfPathList(resources[type].pathname)(config))(config);
-  assert(requestUrl);
-  return requestUrl;
+  return template(requestUrl)(config);
 };

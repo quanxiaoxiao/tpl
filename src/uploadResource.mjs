@@ -7,12 +7,13 @@ import chalk from 'chalk';
 import shelljs from 'shelljs';
 import { $ } from 'zx';
 
+import getResourceTargetByName from './getResourceTargetByName.mjs';
 import getResourceUrl from './getResourceUrl.mjs';
-import resources from './resources.mjs';
 
-export default async (type, configPathname) => {
-  assert(resources[type] && resources[type].localPath);
-  const targetPathname = template(resources[type].localPath)({
+export default async (type) => {
+  const resourceTarget = getResourceTargetByName(type);
+  assert(resourceTarget.localPath);
+  const targetPathname = template(resourceTarget.localPath)({
     home: os.homedir(),
     pwd: process.cwd(),
   });
@@ -20,6 +21,6 @@ export default async (type, configPathname) => {
     console.log(`${chalk.red(targetPathname)} not found`);
     process.exit(1);
   }
-  const requestUrl = getResourceUrl(type, configPathname);
+  const requestUrl = getResourceUrl(type);
   await $`curl -s -X PUT --data-binary @${targetPathname} ${requestUrl}`;
 };

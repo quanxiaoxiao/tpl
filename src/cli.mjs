@@ -1,19 +1,16 @@
-import os from 'node:os';
-import path from 'node:path';
 import process from 'node:process';
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import diffResource from './diffResource.mjs';
+import generateHttpServer from './generateHttpServer.mjs';
 import getPackageInfo from './getPackageInfo.mjs';
 import loadResource from './loadResource.mjs';
 import generateTypeByNodejs from './nodejs.mjs';
 import generateTypeByReact from './react.mjs';
 import resources from './resources.mjs';
 import uploadResource from './uploadResource.mjs';
-
-const configPathname = path.resolve(os.homedir(), '.quan.config.json');
 
 yargs(hideBin(process.argv))
   .command(
@@ -47,11 +44,11 @@ yargs(hideBin(process.argv))
     },
     (argv) => {
       if (argv.diff) {
-        diffResource(argv.name, configPathname);
+        diffResource(argv.name);
       } else if (argv.push) {
-        uploadResource(argv.name, configPathname);
+        uploadResource(argv.name);
       } else if (argv.pull) {
-        loadResource(argv.name, configPathname);
+        loadResource(argv.name);
       }
     },
   )
@@ -75,20 +72,21 @@ yargs(hideBin(process.argv))
       generateTypeByReact({
         path: argv.path,
         type: argv.type,
-        configPathname,
       });
     },
   )
   .command(
     'nodejs [path]',
-    'create nodejs project',
+    'handle code with nodejs',
     (_) => {
       _.options({
         path: {
-          demandOption: true,
           type: 'string',
         },
         test: {
+          type: 'boolean',
+        },
+        httpServer: {
           type: 'boolean',
         },
         testMongo: {
@@ -99,33 +97,38 @@ yargs(hideBin(process.argv))
         },
       })
         .conflicts('test', 'model')
+        .conflicts('test', 'httpServer')
+        .conflicts('test', 'testMongo')
+        .conflicts('testMongo', 'httpServer')
         .conflicts('testMongo', 'model')
-        .conflicts('test', 'testMongo');
+        .conflicts('httpServer', 'model');
     },
     (argv) => {
-      if (argv.test) {
+      if (!argv.httpServer) {
+        if (!argv.path) {
+          console.warn('path unset');
+          process.exit(1);
+        }
+      }
+      if (argv.httpServer) {
+        generateHttpServer();
+      } else if (argv.test) {
         loadResource(
           'nodejsTest',
-          configPathname,
           argv.path,
         );
       } else if (argv.model) {
         loadResource(
           'nodejsModel',
-          configPathname,
           argv.path,
         );
       } else if (argv.testMongo) {
         loadResource(
           'nodejsTestMongo',
-          configPathname,
           argv.path,
         );
       } else {
-        generateTypeByNodejs({
-          path: argv.path,
-          configPathname,
-        });
+        generateTypeByNodejs(argv.path);
       }
     },
   )

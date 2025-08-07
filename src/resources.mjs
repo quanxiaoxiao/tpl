@@ -32,7 +32,7 @@ export default {
     pathname: ['template', 'nodejs', 'dockfile'],
   },
   tmux: {
-    filename: 'Dockfile',
+    filename: '.tmux.conf',
     localPath: '{{home}}/.tmux.conf',
     pathname: ['template', 'tmux'],
   },
@@ -47,6 +47,38 @@ export default {
   nodejsModel: {
     filename: '{{name}}.mjs',
     pathname: ['template', 'nodejs', 'nodejs-mongo-model'],
+  },
+  nodejsStore: {
+    localPath: '{{pwd}}/src/store/store.mjs',
+    pathname: ['template', 'nodejs', 'store'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/store`;
+    },
+  },
+  nodejsInitialState: {
+    localPath: '{{pwd}}/src/store/initialState.mjs',
+    pathname: ['template', 'nodejs', 'initialState'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/datav dotenv`;
+    },
+  },
+  nodejsSelector: {
+    localPath: '{{pwd}}/src/store/selector.mjs',
+    pathname: ['template', 'nodejs', 'selector'],
+  },
+  createHttpServer: {
+    localPath: '{{pwd}}/src/createHttpServer.mjs',
+    pathname: ['template', 'nodejs', 'createHttpServer'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/httttp`;
+    },
+  },
+  nodejsLogger: {
+    localPath: '{{pwd}}/src/logger.mjs',
+    pathname: ['template', 'nodejs', 'logger'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/logger @quanxiaoxiao/node-utils`;
+    },
   },
   'docker-compose': {
     filename: 'docker-compose.yml',

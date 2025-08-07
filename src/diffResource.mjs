@@ -9,15 +9,17 @@ import * as Diff from 'diff';
 import shelljs from 'shelljs';
 
 import fetchResource from './fetchResource.mjs';
+import getResourceTargetByName from './getResourceTargetByName.mjs';
 import resources from './resources.mjs';
 
-export default async (type, configPathname) => {
-  assert(resources[type] && resources[type].localPath);
+export default async (type) => {
+  const resourceTarget = getResourceTargetByName(type);
+  assert(resourceTarget.localPath);
   const targetPathname = template(resources[type].localPath)({
     home: os.homedir(),
     pwd: process.cwd(),
   });
-  const dataWithDest = await fetchResource(type, configPathname);
+  const dataWithDest = await fetchResource(type);
   let diffLine = [];
   if (shelljs.test('-f', targetPathname)) {
     const dataWithSrouce = fs.readFileSync(targetPathname, 'utf-8');
