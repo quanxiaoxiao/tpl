@@ -1,7 +1,13 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import process from 'node:process';
+
+import { template } from '@quanxiaoxiao/utils';
 import chalk from 'chalk';
 import shelljs from 'shelljs';
 
-import loadResource from './loadResource.mjs';
+import fetchResource from './fetchResource.mjs';
+import getResourceTargetByName from './getResourceTargetByName.mjs';
 
 export default async () => {
   [
@@ -17,43 +23,33 @@ export default async () => {
     });
 
   [
-    {
-      pathname: 'src/logger.mjs',
-      resourceName: 'nodejsLogger',
-    },
-    {
-      pathname: 'src/createHttpServer.mjs',
-      resourceName: 'createHttpServer',
-    },
-    {
-      pathname: 'src/connectMongo.mjs',
-      resourceName: 'connectMongo',
-    },
-    {
-      pathname: 'src/store/store.mjs',
-      resourceName: 'nodejsStore',
-    },
-    {
-      pathname: 'src/store/initialState.mjs',
-      resourceName: 'nodejsInitialState',
-    },
-    {
-      pathname: 'src/store/selector.mjs',
-      resourceName: 'nodejsSelector',
-    },
-    {
-      pathname: 'src/routes/index.mjs',
-      resourceName: 'nodejsRoute',
-    },
-    {
-      pathname: '.env',
-      resourceName: 'nodejsEnv',
-    },
+    'nodejsLogger',
+    'createHttpServer',
+    'connectMongo',
+    'nodejsStore',
+    'nodejsInitialState',
+    'nodejsSelector',
+    'nodejsRoute',
+    'nodejsEnv',
   ]
-    .reduce(async (acc, cur) => {
+    .reduce(async (acc, resourceName) => {
       await acc;
-      if (!shelljs.test('-f', cur.pathname)) {
-        await loadResource(cur.resourceName);
+      const resourceTarget = getResourceTargetByName(resourceName);
+      if (!resourceTarget.localPath) {
+        console.log(`resources ${chalk.red(resourceName)} localPath unset`);
+        process.exit(1);
+      }
+      const resourcePathnameAtLocal = template(resourceTarget.localPath)({
+        pwd: process.cwd(),
+        home: os.homedir(),
+      });
+      if (!shelljs.test('-f', resourcePathnameAtLocal)) {
+        const resourceContent = await fetchResource(resourceName);
+        fs.writeFileSync(resourcePathnameAtLocal, resourceContent);
+        console.warn(`create file: ${chalk.green(resourcePathnameAtLocal)}`);
+      }
+      if (resourceTarget.load) {
+        await resourceTarget.load();
       }
     }, Promise.resolve);
 };
