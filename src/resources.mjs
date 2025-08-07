@@ -55,6 +55,20 @@ export default {
       await $`npm install --save @quanxiaoxiao/store`;
     },
   },
+  nodejsRoute: {
+    localPath: '{{pwd}}/src/routes/index.mjs',
+    pathname: ['template', 'nodejs', 'routes'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/utils`;
+    },
+  },
+  connectMongo: {
+    localPath: '{{pwd}}/src/connectMongo.mjs',
+    pathname: ['template', 'nodejs', 'connectMongo'],
+    load: async () => {
+      await $`npm install --save @quanxiaoxiao/mongo`;
+    },
+  },
   nodejsInitialState: {
     localPath: '{{pwd}}/src/store/initialState.mjs',
     pathname: ['template', 'nodejs', 'initialState'],

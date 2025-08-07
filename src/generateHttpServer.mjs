@@ -4,27 +4,52 @@ import shelljs from 'shelljs';
 import loadResource from './loadResource.mjs';
 
 export default async () => {
-  if (!shelljs.test('-d', 'src')) {
-    shelljs.mkdir('src');
-    console.warn(`create dir: ${chalk.green('src')}`);
-  }
-  if (!shelljs.test('-d', 'src/store')) {
-    shelljs.mkdir('-p', 'src/store');
-    console.warn(`create dir: ${chalk.green('src/store')}`);
-  }
-  if (!shelljs.test('-f', 'src/logger.mjs')) {
-    await loadResource('nodejsLogger');
-  }
-  if (!shelljs.test('-f', 'src/createHttpServer.mjs')) {
-    await loadResource('createHttpServer');
-  }
-  if (!shelljs.test('-f', 'src/store/store.mjs')) {
-    await loadResource('nodejsStore');
-  }
-  if (!shelljs.test('-f', 'src/store/initialState.mjs')) {
-    await loadResource('nodejsInitialState');
-  }
-  if (!shelljs.test('-f', 'src/store/selector.mjs')) {
-    await loadResource('nodejsSelector');
-  }
+  [
+    'src',
+    'src/store',
+    'src/routes',
+  ]
+    .forEach((dirPahtname) => {
+      if (!shelljs.test('-d', dirPahtname)) {
+        shelljs.mkdir(dirPahtname);
+        console.warn(`create dir: ${chalk.green(dirPahtname)}`);
+      }
+    });
+
+  [
+    {
+      pathname: 'src/logger.mjs',
+      resourceName: 'nodejsLogger',
+    },
+    {
+      pathname: 'src/createHttpServer.mjs',
+      resourceName: 'createHttpServer',
+    },
+    {
+      pathname: 'src/connectMongo.mjs',
+      resourceName: 'connectMongo',
+    },
+    {
+      pathname: 'src/store/store.mjs',
+      resourceName: 'nodejsStore',
+    },
+    {
+      pathname: 'src/store/initialState.mjs',
+      resourceName: 'nodejsInitialState',
+    },
+    {
+      pathname: 'src/store/selector.mjs',
+      resourceName: 'nodejsSelector',
+    },
+    {
+      pathname: 'src/routes/index.mjs',
+      resourceName: 'nodejsRoute',
+    },
+  ]
+    .reduce(async (acc, cur) => {
+      await acc;
+      if (!shelljs.test('-f', cur.pathname)) {
+        await loadResource(cur.resourceName);
+      }
+    }, Promise.resolve);
 };
