@@ -69,6 +69,10 @@ export default {
       await $`npm install --save @quanxiaoxiao/mongo`;
     },
   },
+  nodejsEnv: {
+    localPath: '{{pwd}}/.env',
+    pathname: ['template', 'nodejs', 'env'],
+  },
   nodejsInitialState: {
     localPath: '{{pwd}}/src/store/initialState.mjs',
     pathname: ['template', 'nodejs', 'initialState'],

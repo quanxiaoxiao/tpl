@@ -45,6 +45,10 @@ export default async () => {
       pathname: 'src/routes/index.mjs',
       resourceName: 'nodejsRoute',
     },
+    {
+      pathname: '.env',
+      resourceName: 'nodejsEnv',
+    },
   ]
     .reduce(async (acc, cur) => {
       await acc;
