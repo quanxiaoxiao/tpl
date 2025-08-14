@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import os from 'node:os';
+import path from 'node:path';
 import process from 'node:process';
 
 import { template } from '@quanxiaoxiao/utils';
@@ -22,7 +23,7 @@ export default async () => {
       }
     });
 
-  [
+  await [
     'nodejsLogger',
     'createHttpServer',
     'connectMongo',
@@ -52,4 +53,25 @@ export default async () => {
         await resourceTarget.load();
       }
     }, Promise.resolve);
+  const projectPackagePathname = path.resolve(process.cwd(), 'package.json');
+  const packageStr = fs.readFileSync(projectPackagePathname).toString();
+  const packageJSON = JSON.parse(packageStr);
+  if (!packageJSON.imports) {
+    packageJSON.imports = {
+      '#store.mjs': './src/store/store.mjs',
+      '#selector.mjs': './src/store/selector.mjs',
+      '#models.mjs': './src/models/index.mjs',
+      '#logger.mjs': './src/logger.mjs',
+      '#controllers/*': './src/controllers/*',
+    };
+  }
+  if (!packageJSON.scripts || !packageJSON.scripts.start) {
+    if (!packageJSON.scripts) {
+      packageJSON.scripts = {};
+    }
+    packageJSON.scripts.start = 'node scr/createHttpServer.mjs';
+  }
+  if (JSON.stringify(JSON.parse(packageStr)) !== JSON.stringify(packageJSON)) {
+    fs.writeFileSync(projectPackagePathname, JSON.stringify(packageJSON, null, 2));
+  }
 };
